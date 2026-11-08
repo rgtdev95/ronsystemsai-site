@@ -1,30 +1,29 @@
 {% extends "base.html" %}
 {% from "partials/macros.html" import page_head with context %}
 {% block title %}Privacy · Ron Systems AI{% endblock %}
-{% block description %}What this website collects, why, and how to ask for it to be removed.{% endblock %}
+{% block description %}What this site collects (very little), why, and your rights: no cookies, cookie-less visitor stats, and bookings through Proton Calendar.{% endblock %}
 {% block main %}
 {{ page_head("Privacy", "This site collects as little as possible. Here is exactly what, and why.") }}
 <section class="block" aria-label="Privacy details">
   <div class="wrap">
     <div class="prose">
       <h2>Who runs this site</h2>
-      <p>Ron Systems AI, the consulting business of Rolando Tactay. Contact: <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
-      <h2>The contact form</h2>
-      <p>When you send a message, I receive your name, email address, business name (if given) and message by email. I use them only to reply and to discuss working together, and I don't sell or share them. You can ask me to delete them at any time.</p>
+      <p>Rolando “Ron” Tactay, who runs Ron Systems AI. Questions about your data: <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
+      <h2>Emails</h2>
+      <p>When you email me, I receive your email address and whatever you write. I use them only to reply and to discuss working together, and I don't sell or share them. You can ask me to delete them at any time.</p>
       <h2>Booking a call</h2>
-      <p>Booking uses Calendly, a separate service with its own privacy policy. The details you enter there are shared with me so I can hold the call.</p>
+      <p>Booking uses Proton Calendar, a separate service run by Proton AG with its own privacy policy. The name and email address you enter there are shared with me so I can hold the call. The booking page opens on Proton's site and sets no cookies on this one.</p>
       <h2>Visitor statistics</h2>
       <p>This site uses Umami, self-hosted on my own server, to count visits and see which pages are useful. It sets no cookies, doesn't track you across other sites, and doesn't store personal information.</p>
       <h2>Cookies</h2>
-      <p>This site sets one cookie, and only on pages with the contact form. It's called <code>session</code> and holds a random security token that stops other websites from sending the form in your name. It contains nothing about you, isn't used for tracking or advertising, and is deleted when you close your browser.</p>
-      <p>Because it's needed for the form to work safely, it doesn't need your consent, so there's no cookie banner. There are no analytics, advertising or social media cookies.</p>
+      <p>This site sets no cookies: no analytics, advertising or social media cookies, and none of its own. That's why there's no cookie banner.</p>
       <h2>Videos</h2>
       <p>Videos on this site are YouTube embeds in privacy-enhanced mode. YouTube doesn't set cookies when the page loads, but once you press play, YouTube (Google) may store information on your device under its own privacy policy.</p>
       <h2>Your rights</h2>
       <p>Wherever you are, you can ask what I hold about you, ask me to correct it, or ask me to delete it. Email <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
       <h2>Changes</h2>
       <p>If this page changes, the date below changes with it. See also the <a href="{{ url_for('pages.terms') }}">terms of use</a>.</p>
-      <p><em>Last updated 30 September 2026.</em></p>
+      <p><em>Last updated 8 November 2026.</em></p>
     </div>
   </div>
 </section>

@@ -562,32 +562,11 @@ p { max-width: 68ch; }
 
 /* About */
 .about-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
-.timeline li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1rem; padding: .9rem 0; border-bottom: 1px dashed var(--rule-strong); }
-.timeline li:first-child { border-top: 1px solid var(--ink); }
-.timeline time { font-family: var(--f-mono); font-size: .72rem; font-weight: 700; letter-spacing: .04em; padding-top: .3rem; color: var(--ink-2); }
-.timeline strong { display: block; }
-.timeline span { color: var(--ink-2); font-size: .98rem; }
 .portrait { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: var(--shadow-paper); }
 
-/* Forms */
-.form { display: grid; gap: 1.25rem; max-width: 40rem; }
-.field label { display: block; font-family: var(--f-body); font-size: .78rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; margin-bottom: .5rem; }
-.field .hint { font-family: var(--f-body); font-size: .85rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-3); margin-left: .4rem; }
-.field input, .field textarea {
-  width: 100%; font: 1.0625rem/1.5 var(--f-body); color: var(--ink);
-  background: var(--white); border: 1px solid var(--rule-strong); border-bottom: 2px solid var(--ink); border-radius: 0;
-  padding: .85rem 1rem; transition: border-color .2s, box-shadow .2s;
-}
-.field textarea { min-height: 10rem; resize: vertical; }
-.field input:hover, .field textarea:hover { border-color: var(--ink-3); border-bottom-color: var(--ink); }
-.field input:focus, .field textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
-.field input::placeholder, .field textarea::placeholder { color: var(--ink-3); }
-.field.has-error input, .field.has-error textarea { border-color: var(--red); border-bottom-color: var(--red); background: var(--red-wash); }
-.field__error { margin-top: .45rem; font-size: .92rem; font-weight: 600; color: var(--red-deep); }
-.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
-.alert { padding: 1rem 1.25rem; background: var(--red-wash); color: var(--red-deep); font-weight: 600; border-top: 2px solid var(--red); }
-.form .stub { justify-self: start; border: 0; cursor: pointer; font-family: var(--f-display); }
-.form button.stub { padding: 0; }
+/* Ways to reach Ron on /book/: email + messaging socials */
+.reach { margin-top: 1.75rem; max-width: 34rem; }
+.reach .meta-line { max-width: none; }
 
 .book-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
 .not-found { padding-block: var(--section); }
@@ -623,7 +602,6 @@ p { max-width: 68ch; }
   .stub { font-size: 1.15rem; }
   .qa summary { font-size: 1.08rem; }
   .qa p { padding-right: 0; }
-  .timeline li { grid-template-columns: minmax(0, 1fr); gap: .2rem; }
   .footer__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .receipt__item a { grid-template-columns: minmax(0, 1fr); }
   .receipt__more { display: none; }

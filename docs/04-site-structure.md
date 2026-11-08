@@ -24,8 +24,8 @@ The current design (`docs/site-initial-design/`) is a single long page. That wor
 /videos/                        YouTube videos, each embedded with a summary and transcript
   /videos/<video-slug>/
 /faq/                           All common questions (answer-first format)
-/book/                          Booking (Calendly) + email alternative
-/contact/                       Short form + email
+/book/                          Booking (Proton Calendar booking page) + email alternative
+/contact/                       Redirects to /book/ (no contact form; email and LinkedIn instead)
 /privacy/                       Privacy policy (GDPR-ready)
 /terms/                         Terms of service
 ```
@@ -43,7 +43,7 @@ Later, only with genuinely different content per market:
 3. Signs you need this (bullets)
 4. What I do (steps)
 5. Example / case study link
-6. Tools I use (names spelled out, for search)
+6. Tools, as one or two sentences, not a list: I work with what you already use or prefer; if you're starting fresh, I'll recommend what fits; then a few examples, names spelled out for search
 7. Format (how the work is scoped; no prices)
 8. FAQ for this service (3–5 real questions)
 9. Call to action: book a free call

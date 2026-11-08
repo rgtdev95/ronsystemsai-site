@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Flask (Python) with server-rendered Jinja2 templates, plain HTML/CSS/JavaScript (no frontend framework, no build step), and Markdown files for content. Runs in Docker behind Caddy (reverse proxy, automatic HTTPS) on a self-managed VPS. Two environments: prod (`ronsystemsai.com`, branch `main`) and test (`test.ronsystemsai.com`, branch `develop`, not indexed). See docs/09-architecture-and-deployment.md and docs/10-git-workflow.md. The `docs/site-initial-design/` prototype is a design and copy reference, not production code.
+Flask (Python) with server-rendered Jinja2 templates, plain HTML/CSS/JavaScript (no frontend framework, no build step), and Markdown files for content. Runs in Docker behind Caddy (reverse proxy, automatic HTTPS) on a self-managed VPS. One environment for now: the live site (`ronsystemsai.com`, deployed from `main` with one compose file and one `.env`); changes are checked locally. See docs/09-architecture-and-deployment.md and docs/10-git-workflow.md. The `docs/site-initial-design/` prototype is a design and copy reference, not production code.
 
 ## Users
 
@@ -26,7 +26,7 @@ An engineer with 11+ years in IT, including four years of 24/7 production suppor
 
 ## Operating Context
 
-Visitors arrive from Google and Bing, AI assistants (ChatGPT, Perplexity, Gemini, Claude, Copilot), YouTube, Facebook, LinkedIn, and referrals. The conversion path is a free 20-minute video call booked through Calendly, with email or a contact form as alternatives. Engagement path: discovery call → tech check-up and roadmap → implementation project → optional monthly support, each scoped and quoted before work starts.
+Visitors arrive from Google and Bing, AI assistants (ChatGPT, Perplexity, Gemini, Claude, Copilot), YouTube, Facebook, LinkedIn, and referrals. The conversion path is a free 30-minute phone call booked through a Proton Calendar booking page, with email or a LinkedIn message as alternatives (no contact form). Engagement path: discovery call → tech check-up and roadmap → implementation project → optional monthly support, each scoped and quoted before work starts.
 
 ## Capabilities and Constraints
 
@@ -35,10 +35,10 @@ Visitors arrive from Google and Bing, AI assistants (ChatGPT, Perplexity, Gemini
 - No price figures anywhere on the site.
 - Language: English, US spelling.
 - Every page is server-rendered HTML with structured data (ProfessionalService, Person, Service, FAQPage, Article, VideoObject). AI crawlers are allowed on prod; the test environment is noindex and behind basic auth.
-- Time zones and availability are not addressed on the site (no time-zone FAQ, no response-time promises); Ron manages call slots in Calendly.
+- Time zones and availability are not addressed on the site (no time-zone FAQ, no response-time promises); Ron manages call slots in his Proton Calendar booking page.
 - No client-location claims in site copy ("Working with clients in…"); target markets live only in structured data.
 - Analytics: Umami (self-hosted, cookie-less, prod only) + Google Search Console + Bing Webmaster Tools.
-- Email: Proton Mail on `hello@ronsystemsai.com`; contact form sends via Proton SMTP submission. See docs/08-open-decisions.md.
+- Email: Proton Mail on `contactme@ronsystemsai.com`. The site only links to it and sends no mail itself. See docs/08-open-decisions.md.
 
 ## Brand Commitments
 
@@ -51,7 +51,7 @@ Visitors arrive from Google and Bing, AI assistants (ChatGPT, Perplexity, Gemini
 - Resume: `docs/about-ron/ron-resume.pdf` (private, gitignored; includes a phone number).
 - Anonymized project proof from the resume: custom CRM (leads, payments, scheduling, SMS, analytics, catalog, promo codes); Python + n8n pipelines into replicated PostgreSQL; GPT agent integrated with a project-management platform; self-hosted business stack on Proxmox/TrueNAS; OCR/RAG/local-LLM document processing.
 - Initial design prototype with drafted copy: `docs/site-initial-design/`.
-- **Absent, never fabricate:** testimonials, client names or logos, quantified results, a professional photo, a logo, and a real Calendly URL.
+- **Absent, never fabricate:** testimonials, client names or logos, quantified results, a professional photo, a logo, and a real booking URL.
 
 ## Product Principles
 

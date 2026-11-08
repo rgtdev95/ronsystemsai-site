@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% from "partials/macros.html" import icon, stub, page_head with context %}
-{% block title %}Book a free 20-minute call · Ron Systems AI{% endblock %}
-{% block description %}Book a free, no-obligation 20-minute video call about what's slowing your business down.{% endblock %}
+{% block title %}Book a free 30-minute call · Ron Systems AI{% endblock %}
+{% block description %}Book a free, no-obligation 30-minute phone call about what's slowing your business down.{% endblock %}
 {% block main %}
-{{ page_head("Book a free 20-minute call", "Tell me what's slowing your business down. I'll tell you honestly whether I can help. No sales pitch and no obligation.") }}
+{{ page_head("Book a free 30-minute call", "Tell me what's slowing your business down. I'll tell you honestly whether I can help. No sales pitch and no obligation.") }}
 <section class="block" aria-label="Booking">
   <div class="wrap book-grid">
     <article class="docket docket--ticket" aria-label="Discovery call">
@@ -13,21 +13,26 @@
         {% for item in C.BOOK_AGENDA %}<li>{{ icon('check') }}<span>{{ item }}</span></li>{% endfor %}
       </ul>
       <dl class="docket__meta">
-        <div><dt>Length</dt><dd>20 minutes</dd></div>
-        <div><dt>Format</dt><dd>Video call</dd></div>
+        <div><dt>Length</dt><dd>30 minutes</dd></div>
+        <div><dt>Format</dt><dd>Phone call</dd></div>
         <div><dt>Cost</dt><dd>Free, no obligation</dd></div>
       </dl>
-      {% if calendly_url %}
+      {% if booking_url %}
       <div class="docket__action">
-        {{ stub("Choose a time", calendly_url, event="calendly-open", external=True) }}
-        <p class="docket__alt">Opens Calendly, which shows times in your own time zone.</p>
+        {{ stub("Choose a time", booking_url, event="booking-open", external=True) }}
+        <p class="docket__alt">Opens my booking page on Proton Calendar, where you can pick your own time zone.</p>
       </div>
       {% endif %}
     </article>
     <div>
-      <h2 class="display display--m">{% if calendly_url %}Prefer to write?{% else %}Tell me a little first{% endif %}</h2>
-      <p class="section-lede">{% if calendly_url %}Send a message and I'll reply by email.{% else %}Send a short message and I'll reply by email to arrange a time for the call.{% endif %}</p>
-      <div class="block-form">{% include "partials/contact_form.html" %}</div>
+      <h2 class="display display--m">{% if booking_url %}Prefer to write?{% else %}Get in touch{% endif %}</h2>
+      <p class="section-lede">{% if booking_url %}Email me a sentence or two about your business and what's slowing it down. I'll reply by email.{% else %}Email me a sentence or two about your business and what's slowing it down, and I'll reply to arrange a time for the call.{% endif %}</p>
+      <div class="reach">
+        <p class="meta-line"><span>Email</span><a class="link" href="mailto:{{ contact_email }}" data-umami-event="email-click">{{ contact_email }}</a></p>
+        {% for name in ("LinkedIn", "Facebook") if social.get(name) %}
+        <p class="meta-line"><span>{{ name }}</span><a class="link" href="{{ social[name] }}" rel="me noopener" target="_blank" data-umami-event="social-{{ name | lower }}">Message me on {{ name }}</a></p>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </section>

@@ -1,9 +1,0 @@
-# Local development: docker compose up --build  ->  http://127.0.0.1:8000
-services:
-  web:
-    build: .
-    environment:
-      APP_ENV: development
-      SITE_URL: http://127.0.0.1:8000
-    ports:
-      - "127.0.0.1:8000:8000"

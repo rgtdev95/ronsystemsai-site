@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "partials/macros.html" import icon, page_head, book_close with context %}
-{% block title %}{{ s.name }} for small business · Ron Systems AI{% endblock %}
+{% block title %}{{ s.seo_title or (s.name ~ ' for small business') }} · Ron Systems AI{% endblock %}
 {% block description %}{{ s.short }}{% endblock %}
 {% block main %}
 {% call page_head(s.title, None, ("All services", url_for('pages.services'))) %}

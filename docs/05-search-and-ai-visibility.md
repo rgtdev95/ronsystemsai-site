@@ -40,7 +40,7 @@ Allow: /
 Sitemap: https://ronsystemsai.com/sitemap.xml
 ```
 
-If you ever put a CDN/WAF in front of the VPS (e.g. Cloudflare), turn off its "block AI bots" setting. The **test** site serves the opposite: `Disallow: /` for everyone.
+If you ever put a CDN/WAF in front of the VPS (e.g. Cloudflare), turn off its "block AI bots" setting. Anything that isn't the live site (`APP_ENV` other than `production`) serves the opposite: `Disallow: /` for everyone.
 
 ### llms.txt
 
@@ -93,8 +93,8 @@ AI models decide who to cite partly by how consistently an entity shows up acros
 ## 6. Tools and measurement
 
 - [ ] Google Search Console (verify domain, submit sitemap)
-- [ ] Bing Webmaster Tools. Bing's index feeds ChatGPT search and Copilot, so it's easy to overlook and important. Enable **IndexNow**
-- [ ] **Umami** analytics, self-hosted on the VPS (decided). Cookie-less, so no cookie banner is needed in the EU. Set up events: Book-a-call clicks, contact-form submits, Calendly bookings, social-link clicks
+- [ ] Bing Webmaster Tools. Bing's index feeds ChatGPT search and Copilot, so it's easy to overlook and important. Enable **IndexNow**: set `INDEXNOW_KEY` in the server's `.env` (see `.env.example`); the site serves the key file and every deploy submits the sitemap's pages
+- [ ] **Umami** analytics, self-hosted on the VPS (decided). Cookie-less, so no cookie banner is needed in the EU. Set up events: Book-a-call clicks, booking-page opens, email clicks, social-link clicks (Proton doesn't report completed bookings back to the site)
 - [ ] Monthly "AI visibility check": ask ChatGPT, Perplexity, Gemini, and Claude 10 fixed questions (e.g. "best automation consultant for small business in Australia") and log whether you're cited
 - [ ] Track referral traffic from `chatgpt.com`, `perplexity.ai`, `gemini.google.com`, and `copilot.microsoft.com`
 

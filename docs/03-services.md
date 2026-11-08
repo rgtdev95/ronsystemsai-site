@@ -65,7 +65,7 @@ Monitoring, fixes, updates, and steady improvements with a set number of hours e
 
 | Model | For | How it's priced |
 |---|---|---|
-| Free discovery call (20 min) | Everyone | Free |
+| Free discovery call (30 min, by phone) | Everyone | Free |
 | Tech check-up and roadmap | Businesses not sure where to start | Fixed scope, quoted up front |
 | Implementation project | Anyone with a defined roadmap | Scoped and quoted up front |
 | Monthly support | After go-live | Monthly, set hours |

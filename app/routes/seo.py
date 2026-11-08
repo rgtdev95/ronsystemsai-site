@@ -1,6 +1,8 @@
 from datetime import date
 
-from flask import Blueprint, Response, current_app, render_template, url_for
+import os
+
+from flask import Blueprint, Response, abort, current_app, render_template, send_from_directory, url_for
 
 from .. import site_content as C
 from ..services.content_loader import all_items
@@ -30,14 +32,15 @@ def robots():
 
 @bp.get("/sitemap.xml")
 def sitemap():
+    # Only real dates go in <lastmod>: search engines ignore a sitemap whose dates are always "today".
+    # Pages built from code have none; Markdown items use their published/updated dates.
     site = current_app.config["SITE_URL"]
-    today = date.today().isoformat()
-    urls = [(url_for(e), today) for e in (
+    urls = [(url_for(e), None) for e in (
         "pages.home", "pages.services", "pages.process", "pages.work",
-        "pages.about", "pages.faq", "pages.book", "pages.contact", "pages.privacy",
+        "pages.about", "pages.faq", "pages.book", "pages.privacy",
         "pages.terms",
     )]
-    urls += [(url_for("pages.service", slug=s["slug"]), today) for s in C.SERVICES]
+    urls += [(url_for("pages.service", slug=s["slug"]), None) for s in C.SERVICES]
     for kind, endpoint in (("resources", "content.resource"), ("videos", "content.video")):
         items = all_items(kind)
         if items:
@@ -63,6 +66,24 @@ def security_txt():
         "Preferred-Languages: en\n"
         f"Canonical: {cfg['SITE_URL']}/.well-known/security.txt\n"
     )
+
+
+@bp.get("/<key>.txt")
+def indexnow_key(key):
+    expected = current_app.config["INDEXNOW_KEY"]
+    if not expected or key != expected:
+        abort(404)
+    return _text(expected)
+
+
+@bp.get("/favicon.ico")
+def favicon():
+    return send_from_directory(os.path.join(current_app.static_folder, "img"), "favicon.ico")
+
+
+@bp.get("/apple-touch-icon.png")
+def apple_touch_icon():
+    return send_from_directory(os.path.join(current_app.static_folder, "img"), "apple-touch-icon.png")
 
 
 @bp.get("/healthz")

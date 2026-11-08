@@ -40,7 +40,7 @@ English-speaking markets, served remotely from Manila.
 
 - **Language:** English with US spelling site-wide (decided). Don't mix spellings.
 - **Pricing:** not shown on the site (decided). Projects are scoped and quoted after the discovery call.
-- **Time zones:** not addressed on the site (decided). No time-zone FAQ, no working-hours or response-time promises. Ron manages call availability in Calendly, which shows each visitor slots in their local time.
+- **Time zones:** not addressed on the site (decided). No time-zone FAQ, no working-hours or response-time promises. Ron manages call availability in his Proton Calendar booking page, where each visitor can pick their own time zone.
 - **Location pages:** add one market page per region only when it has real, different content (see [05-search-and-ai-visibility.md](05-search-and-ai-visibility.md)).
 
 > Decided: the site copy makes no client-location claims (no "Working with clients in…" / "Available to clients in…"). The initial design's line is dropped. Target markets live only in structured data (`areaServed`).

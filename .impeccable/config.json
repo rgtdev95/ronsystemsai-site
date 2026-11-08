@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "app/static/css/site.css"
+        ],
+        "createdAt": "2026-11-08T14:56:22.631Z",
+        "reason": "Claude triage: site.css L293 is .spike__rod::before, a CSS border triangle (transparent sides + 10px bottom border) forming the spike tip, not an accent border on a rounded card; predates this session (commit 5e49a49)"
+      }
+    ]
+  }
+}

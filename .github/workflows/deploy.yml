@@ -1,12 +1,12 @@
 name: Deploy
 
-# develop -> test.ronsystemsai.com, main -> ronsystemsai.com
+# main -> ronsystemsai.com. The only environment for now; `develop` just runs CI on pull requests.
 on:
   push:
-    branches: [develop, main]
+    branches: [main]
 
 concurrency:
-  group: deploy-${{ github.ref_name }}
+  group: deploy
   cancel-in-progress: false
 
 permissions:
@@ -16,9 +16,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'prod' || 'test' }}
+    environment: prod
     env:
-      ENV_NAME: ${{ github.ref_name == 'main' && 'prod' || 'test' }}
       IMAGE: ghcr.io/${{ github.repository }}
     steps:
       - uses: actions/checkout@v4
@@ -39,10 +38,10 @@ jobs:
 
       - name: Build and push
         run: |
-          TAG="${ENV_NAME}-${GITHUB_SHA::7}"
-          docker build -t "$IMAGE:$TAG" -t "$IMAGE:${ENV_NAME}-latest" .
+          TAG="${GITHUB_SHA::7}"
+          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
           docker push "$IMAGE:$TAG"
-          docker push "$IMAGE:${ENV_NAME}-latest"
+          docker push "$IMAGE:latest"
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Deploy on the VPS
@@ -51,13 +50,20 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          envs: TAG,ENV_NAME
+          envs: TAG,IMAGE
           script: |
             cd ~/ronsystemsai/deploy
-            IMAGE_TAG="$TAG" docker compose -f "compose.${ENV_NAME}.yml" pull
-            IMAGE_TAG="$TAG" docker compose -f "compose.${ENV_NAME}.yml" up -d
+            export IMAGE IMAGE_TAG="$TAG"
+            docker compose pull web
+            docker compose up -d --remove-orphans
             docker image prune -f
-
-      - name: Ping IndexNow (prod only)
-        if: env.ENV_NAME == 'prod' && vars.INDEXNOW_KEY != ''
-        run: curl -fsS "https://api.indexnow.org/indexnow?url=https://ronsystemsai.com/sitemap.xml&key=${{ vars.INDEXNOW_KEY }}" || true
+            # IndexNow: ask Bing (and other engines) to recrawl every page in the sitemap.
+            # The key lives in .env; the site serves it at /<key>.txt to prove ownership.
+            KEY=$(grep '^INDEXNOW_KEY=' .env | cut -d= -f2- | tr -d '"\r')
+            if [ -n "$KEY" ]; then
+              URLS=$(curl -fsS --retry 5 --retry-delay 3 --retry-all-errors https://ronsystemsai.com/sitemap.xml \
+                | grep -o '<loc>[^<]*' | sed 's/<loc>/"/; s/$/"/' | paste -sd, -)
+              curl -fsS -H 'Content-Type: application/json; charset=utf-8' \
+                -d "{\"host\":\"ronsystemsai.com\",\"key\":\"$KEY\",\"urlList\":[$URLS]}" \
+                https://api.indexnow.org/indexnow || echo "IndexNow ping failed (not fatal)"
+            fi

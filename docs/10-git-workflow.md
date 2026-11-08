@@ -1,12 +1,12 @@
 # 10 — Git workflow
 
-A simple git flow with two long-lived branches, each tied to an environment.
+A simple git flow with two long-lived branches. Only `main` deploys; there's no test site for now (decision 17 in [08-open-decisions.md](08-open-decisions.md)), so check changes on your own PC before merging.
 
 ```
 feature/*  ──PR──►  develop  ──PR──►  main
-                      │                 │
-                      ▼                 ▼
-               test.ronsystemsai.com   ronsystemsai.com
+                    (CI only)           │
+                                        ▼
+                                  ronsystemsai.com
                                         ▲
 hotfix/*  ──PR──────────────────────────┘  (then merge main back into develop)
 ```
@@ -16,7 +16,7 @@ hotfix/*  ──PR────────────────────�
 | Branch | Purpose | Deploys to | Rules |
 |---|---|---|---|
 | `main` | What's live | **prod** | Protected. Changes only via PR from `develop` or `hotfix/*`. Tagged on each release. |
-| `develop` | Integration; what's being tested | **test** | Protected. Changes via PR from `feature/*` / `fix/*`. |
+| `develop` | Integration; finished work waiting for the next release | — (CI only) | Protected. Changes via PR from `feature/*` / `fix/*`. |
 | `feature/<short-name>` | New pages, sections, features | — | Branch from `develop`, PR back into `develop`. Delete after merge. |
 | `fix/<short-name>` | Non-urgent bug fixes | — | Same as feature. |
 | `content/<short-name>` | New articles, videos, case studies | — | Same as feature. Content is also tested before it goes live. |
@@ -31,10 +31,10 @@ git switch -c feature/services-pages
 
 # ...commit as you go...
 git push -u origin feature/services-pages
-# open PR → develop. CI runs; merge → auto-deploys to test
+# check it on your PC first: uv run flask --app wsgi run --debug
+# open PR → develop. CI runs the tests; merge
 
-# release: after checking test.ronsystemsai.com
-# open PR develop → main. Merge → auto-deploys to prod
+# release: open PR develop → main. Merge → auto-deploys to ronsystemsai.com
 git switch main && git pull
 git tag -a v1.0.0 -m "Launch" && git push origin v1.0.0
 ```
@@ -45,7 +45,7 @@ git tag -a v1.0.0 -m "Launch" && git push origin v1.0.0
   Example: `content: add n8n vs Zapier article`
 - **Versions:** `vMAJOR.MINOR.PATCH` tags on `main`. `v1.0.0` = public launch.
 - **Merge style:** squash-merge feature branches into `develop`; use a merge commit for `develop` → `main` so releases are easy to see.
-- **Never commit:** `.env*` files (except `.env.example`), `docs/about-ron/`, secrets, or client data.
+- **Never commit:** `.env` (only `.env.example`), `docs/about-ron/`, secrets, or client data.
 
 ## GitHub settings to turn on
 

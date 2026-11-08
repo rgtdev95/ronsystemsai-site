@@ -24,6 +24,7 @@ SERVICES = [
     {
         "slug": "tech-roadmap",
         "name": "Tech check-up and roadmap",
+        "seo_title": "Small business tech check-up and roadmap",
         "short": "A review of your tools, workflows and data, and a prioritized plan: what to fix first, what to leave alone, and why.",
         "start_here": True,
         "title": "Know exactly what to fix in your business tech, and in what order",
@@ -44,7 +45,7 @@ SERVICES = [
             "A written roadmap: priorities, options, trade-offs and next steps.",
             "A walkthrough call so every recommendation makes sense.",
         ],
-        "tools": "Works with whatever you use today: Microsoft 365, Google Workspace, CRMs, accounting, booking and support tools.",
+        "tools": "I review whatever you use today, whether that's Microsoft 365 or Google Workspace, a CRM, or your accounting, booking and support software. Nothing has to change before we start, and the roadmap tells you what to keep, fix or replace.",
         "format": "Fixed scope, usually 1–2 weeks. Quoted before work starts.",
         "faqs": [
             ("Do I have to hire you to do the work afterwards?", "No. The roadmap is yours. It's written so your team or another provider can follow it."),
@@ -72,7 +73,7 @@ SERVICES = [
             "Test it with real examples alongside your team.",
             "Hand over documentation and a short walkthrough.",
         ],
-        "tools": "n8n, Zapier, Make, Microsoft Power Automate, Python, PowerShell.",
+        "tools": "I build with the automation tool you already have or prefer, for example Power Automate if you're on Microsoft 365. If you don't have one yet, I'll recommend the best fit for your apps and budget, such as n8n, Zapier or Make, or write custom Python when no ready-made tool fits.",
         "format": "Scoped and quoted up front, often as part of an implementation project.",
         "faqs": [
             ("Which automation tool will you use?", "The one that fits your budget, your apps and how much control you need. Sometimes that's Zapier; sometimes a self-hosted n8n saves a lot of money."),
@@ -102,7 +103,7 @@ SERVICES = [
             "Test with real examples and add human approval where it matters.",
             "Document it and train your team.",
         ],
-        "tools": "GPT and Claude models, AI agent frameworks such as Hermes and OpenClaw, retrieval-augmented generation (RAG), OCR, and private local models when data can't leave your control.",
+        "tools": "I work with the AI your business already uses or prefers, such as ChatGPT or Claude. If you're starting fresh, I'll recommend a setup based on cost, accuracy and privacy, including private models that run on your own hardware when data can't leave your control.",
         "format": "Scoped and quoted up front.",
         "faqs": [
             ("Is our data safe?", "We decide together what the AI can see. When data can't leave your control, a private model can run on your own server."),
@@ -112,6 +113,7 @@ SERVICES = [
     {
         "slug": "software-selection",
         "name": "Choosing the right software",
+        "seo_title": "Choosing the right business software",
         "short": "Honest advice on what to buy, build or self-host, tested against how your team actually works.",
         "title": "Choose software that fits how your business really works",
         "answer": (
@@ -130,7 +132,7 @@ SERVICES = [
             "Test the shortlist with real tasks and real users.",
             "Recommend one, with costs, risks and a migration plan.",
         ],
-        "tools": "Vendor-neutral. Cloud and self-hosted options are both on the table.",
+        "tools": "Vendor-neutral: I earn nothing from what I recommend. If you already have favorites, we test those. If not, I'll shortlist options, cloud or self-hosted, and recommend the one that fits how your team works.",
         "format": "Fixed scope. Quoted before work starts.",
         "faqs": [
             ("Do you get commissions from vendors?", "No. I don't resell software, so the recommendation is only about what's right for you."),
@@ -139,6 +141,7 @@ SERVICES = [
     {
         "slug": "systems-setup",
         "name": "Systems setup and architecture",
+        "seo_title": "IT systems setup for small business",
         "short": "A plan for how your email, CRM, finance, files and data fit together, then set up securely, backed up and ready to grow.",
         "title": "Set up business systems that are secure, backed up and ready to grow",
         "answer": (
@@ -157,7 +160,7 @@ SERVICES = [
             "Migrate data and test it before switching over.",
             "Hand over documentation, access and training.",
         ],
-        "tools": "Microsoft 365, AWS, Proxmox, Linux and Windows Server, Docker, PostgreSQL and SQL Server, VPNs, password managers.",
+        "tools": "I build on the platforms you already use, whether that's Microsoft 365, a cloud provider such as AWS, Azure or Google Cloud, or your own servers. If you're starting fresh or outgrowing what you have, I'll recommend a setup that fits your budget and the people who'll look after it.",
         "format": "Scoped and quoted up front, delivered in phases.",
         "faqs": [
             ("Cloud or our own server?", "Whichever fits your budget, skills and data rules. Self-hosting often costs less than subscriptions, but it needs looking after."),
@@ -184,7 +187,7 @@ SERVICES = [
             "Connect it to the tools you keep.",
             "Hand over code, documentation and access.",
         ],
-        "tools": "Python, PostgreSQL, modern web frameworks, and the APIs of the apps you already use.",
+        "tools": "I connect what I build to the apps you already use. If you have a preferred technology or an in-house developer, I'll build with that. If not, I'll use something widely known, such as Python and PostgreSQL, so anyone can maintain it later.",
         "format": "Scoped and quoted up front.",
         "faqs": [
             ("Will we be locked in to you?", "No. You receive the code, documentation and every login. Another developer can pick it up."),
@@ -211,7 +214,7 @@ SERVICES = [
             "Keep software, access and backups up to date.",
             "Work through your improvement list each month.",
         ],
-        "tools": "Monitoring with Grafana, Prometheus and Wazuh, plus runbooks and documentation you keep.",
+        "tools": "I look after your systems with the monitoring you already have. If there isn't any, I'll recommend and set up something lightweight, such as Grafana, and keep the runbooks and documentation up to date for you.",
         "format": "Monthly, a set number of hours, cancel anytime.",
         "faqs": [
             ("Do we need support to work with you?", "No. It's optional, and many clients start with a project and decide later."),
@@ -220,7 +223,7 @@ SERVICES = [
 ]
 
 PROCESS = [
-    ("Discovery call", "A 20-minute conversation about your business, what's slowing it down and what you'd like to change. You'll know if I'm a fit, and I'll know if I can help.", True),
+    ("Discovery call", "A 30-minute phone call about your business, what's slowing it down and what you'd like to change. You'll know if I'm a fit, and I'll know if I can help.", True),
     ("Assessment", "I review your current tools, workflows and data, and talk to the people who use them every day.", False),
     ("Roadmap and proposal", "A clear plan with priorities, options, timeline and a fixed quote, so there are no surprises.", False),
     ("Design", "I design the solution and choose the tools with you. Nothing gets built until you approve it.", False),
@@ -279,17 +282,18 @@ CASES = [
 ]
 
 WHY = [
-    ("Enterprise discipline, small-business scale", "Four years in a 24/7 financial software environment taught me incident management, service levels and runbooks. You get the same care about reliability."),
+    ("Enterprise discipline, small-business scale", "11+ years of IT work across finance, healthcare, manufacturing, IT service providers (MSPs) and startups taught me incident management, service levels and runbooks. You get the same care about reliability."),
     ("Plain English", "I explain options and trade-offs without jargon, so you can make the decision yourself."),
     ("You own everything", "Documentation, code and access are handed over. No lock-in, and no dependence on me."),
     ("Honest, vendor-neutral advice", "I earn nothing from the tools I recommend. Sometimes the answer is to use what you already have."),
 ]
 
 TOOLS = [
+    ("Your business apps", "Accounting, CRM, booking and scheduling, online stores, email and messaging, forms and spreadsheets, connected through their APIs, webhooks or exports"),
     ("Automation and AI", "n8n, Zapier, Make, Microsoft Power Automate, Python, PowerShell, GPT and Claude models, AI agents, RAG, OCR, local LLMs"),
-    ("Data", "PostgreSQL, Microsoft SQL Server, MySQL, Excel and VBA, ETL pipelines, database replication"),
-    ("Cloud and infrastructure", "AWS, Proxmox, TrueNAS, Linux, Windows Server, Docker, Kubernetes, Terraform, Ansible"),
-    ("Security and operations", "Microsoft 365, Active Directory, VPNs, Vaultwarden, Wazuh, GitHub Actions, Grafana, Prometheus"),
+    ("Data", "PostgreSQL, Microsoft SQL Server, MySQL, ETL pipelines, database replication, dashboards and reporting on live data"),
+    ("Cloud and infrastructure", "AWS, Microsoft Azure, Google Cloud, Proxmox, TrueNAS, Linux, Windows Server, Docker, Kubernetes, Terraform, Ansible"),
+    ("Security and operations", "Microsoft 365, Active Directory, single sign-on (SSO) and multi-factor authentication (MFA), VPNs, 1Password, Vaultwarden, secrets management, Wazuh, GitHub Actions, Grafana, Prometheus"),
 ]
 
 # Marks for the home page tool strip, in display order: (symbol slug in partials/tool-logos.svg, name).
@@ -322,7 +326,7 @@ TOOL_LOGOS = [
 FAQS = [
     ("What happens on the free call?", "We talk about how your business runs, what's slowing it down and what you'd like to change. I'll tell you honestly whether I can help and what a sensible first step looks like. There's no obligation."),
     ("Do I need to be technical?", "No. I explain everything in plain language and focus on what the technology does for your business, not how it works inside."),
-    ("Can you work with the tools we already use?", "Yes. Often the best result comes from connecting and tidying what you have. I'll only recommend something new when it clearly pays off."),
+    ("Can you work with the tools we already use?", "Yes, including tools that aren't listed on this site. Most business apps can be connected through their API, webhooks or exports. If I haven't used yours before, I'll say so and check what it can do before quoting. Often the best result comes from connecting and tidying what you already have."),
     ("How does pricing work?", "Every project is scoped and quoted before work starts, so you know the cost up front. Ongoing support is a monthly arrangement for a set number of hours."),
     ("Will I own what you build?", "Yes. You receive the documentation, code and access for everything I build, so you're never locked in."),
     ("Do you work remotely?", "Yes. Assessments, builds, training and support all run remotely over video calls and secure access."),

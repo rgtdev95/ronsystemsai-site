@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, abort, make_response, render_template
 
 from .. import site_content as C
 
@@ -14,7 +14,12 @@ KINDS = {
 
 
 def _list(kind):
-    return render_template("content/list.html", C=C, items=all_items(kind), kind=kind, meta=KINDS[kind])
+    items = all_items(kind)
+    resp = make_response(render_template("content/list.html", C=C, items=items, kind=kind, meta=KINDS[kind]))
+    if not items:
+        # An empty listing is a thin page: keep it out of search results until there's content.
+        resp.headers["X-Robots-Tag"] = "noindex"
+    return resp
 
 
 def _item(kind, slug):

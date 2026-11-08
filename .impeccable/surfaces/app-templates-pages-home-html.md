@@ -9,7 +9,7 @@ related_targets: ["app/templates/base.html","app/static/css/site.css"]
 
 Scope: homepage of ronsystemsai.com, plus the shared world every page inherits (base layout, nav, footer, docket components). Visitor mode: Persuade.
 
-Audience: owners/ops managers of small and medium businesses in English-speaking markets, non-technical, wary of jargon, upsell and lock-in. Job: understand what Ron fixes and trust him enough to book. Action: Book a free 20-minute call (Calendly), email as the alternative. Proof: 11+ years in IT, 4 years 24/7 financial production support, three anonymized case studies, vendor-neutral, client owns everything. No prices, no time-zone talk, no client-location claims, no testimonials (none exist).
+Audience: owners/ops managers of small and medium businesses in English-speaking markets, non-technical, wary of jargon, upsell and lock-in. Job: understand what Ron fixes and trust him enough to book. Action: Book a free 30-minute phone call (Proton Calendar booking page), email as the alternative. Proof: 11+ years in IT, 4 years 24/7 financial production support, three anonymized case studies, vendor-neutral, client owns everything. No prices, no time-zone talk, no client-location claims, no testimonials (none exist).
 
 ## Direction contract
 

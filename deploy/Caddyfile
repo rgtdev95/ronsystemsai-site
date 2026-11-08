@@ -1,5 +1,5 @@
 {
-	email hello@ronsystemsai.com
+	email contactme@ronsystemsai.com
 }
 
 (security_headers) {
@@ -19,17 +19,7 @@ www.ronsystemsai.com {
 ronsystemsai.com {
 	import security_headers
 	encode zstd gzip
-	reverse_proxy web-prod:8000
-}
-
-test.ronsystemsai.com {
-	import security_headers
-	header X-Robots-Tag "noindex, nofollow"
-	basic_auth {
-		{$TEST_USER} {$TEST_PASS_HASH}
-	}
-	encode zstd gzip
-	reverse_proxy web-test:8000
+	reverse_proxy web:8000
 }
 
 stats.ronsystemsai.com {

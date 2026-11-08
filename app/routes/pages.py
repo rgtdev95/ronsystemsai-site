@@ -1,10 +1,7 @@
-from flask import Blueprint, abort, current_app, flash, redirect, render_template, url_for
+from flask import Blueprint, abort, redirect, render_template, url_for
 
-from .. import limiter
 from .. import site_content as C
-from ..forms import ContactForm
 from ..services import schema
-from ..services.mailer import send_contact_message
 
 bp = Blueprint("pages", __name__)
 
@@ -87,41 +84,14 @@ def book():
     return render_template(
         "pages/book.html",
         C=C,
-        form=ContactForm(),
         jsonld=[schema.breadcrumbs([("Book a call", "pages.book", {})])],
     )
 
 
-@bp.route("/contact/", methods=["GET", "POST"])
-@limiter.limit("5 per hour", methods=["POST"])
+@bp.get("/contact/")
 def contact():
-    form = ContactForm()
-    if form.validate_on_submit():
-        if form.website.data:  # honeypot: bots fill every field
-            return redirect(url_for("pages.contact_sent"))
-        ok = send_contact_message(
-            name=form.name.data,
-            email=form.email.data,
-            company=form.company.data,
-            message=form.message.data,
-        )
-        if ok:
-            return redirect(url_for("pages.contact_sent"))
-        flash(
-            f"Your message couldn't be sent just now. Please try again, or email {current_app.config['CONTACT_EMAIL']} directly.",
-            "error",
-        )
-    return render_template(
-        "pages/contact.html",
-        C=C,
-        form=form,
-        jsonld=[schema.breadcrumbs([("Contact", "pages.contact", {})])],
-    ), (422 if form.errors else 200)
-
-
-@bp.get("/contact/sent/")
-def contact_sent():
-    return render_template("pages/contact_sent.html")
+    """The contact form was dropped; email and the booking page replace it. Keeps old links working."""
+    return redirect(url_for("pages.book"), code=301)
 
 
 @bp.get("/privacy/")

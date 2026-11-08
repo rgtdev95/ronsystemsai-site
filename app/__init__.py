@@ -4,24 +4,15 @@ import os
 from datetime import date
 
 from flask import Flask, render_template, request, url_for
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from flask_wtf.csrf import CSRFProtect
 
 from .config import CONFIGS
-
-csrf = CSRFProtect()
-limiter = Limiter(key_func=get_remote_address, default_limits=[])
 
 
 def create_app(env=None):
     env = env or os.environ.get("APP_ENV", "development")
     app = Flask(__name__)
     app.config.from_object(CONFIGS.get(env, CONFIGS["development"]))
-    app.url_map.strict_slashes = False
-
-    csrf.init_app(app)
-    limiter.init_app(app)
+    # Flask's default: /about redirects (308) to /about/, so each page has one URL for search engines.
 
     from .routes import content, pages, seo
 
@@ -57,7 +48,7 @@ def _register_template_helpers(app):
             "absolute": absolute,
             "site_name": cfg["SITE_NAME"],
             "contact_email": cfg["CONTACT_EMAIL"],
-            "calendly_url": cfg["CALENDLY_URL"],
+            "booking_url": cfg["BOOKING_URL"],
             "social": cfg["SOCIAL"],  # every network; the footer links only those with a URL
             "umami": (cfg["UMAMI_SCRIPT_URL"], cfg["UMAMI_WEBSITE_ID"])
             if cfg["UMAMI_SCRIPT_URL"] and cfg["UMAMI_WEBSITE_ID"] and cfg["ALLOW_INDEXING"]
@@ -95,7 +86,3 @@ def _register_errors(app):
     @app.errorhandler(404)
     def not_found(_e):
         return render_template("pages/404.html"), 404
-
-    @app.errorhandler(429)
-    def too_many(_e):
-        return render_template("pages/429.html"), 429

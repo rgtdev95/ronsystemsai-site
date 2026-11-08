@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-{% from "partials/macros.html" import page_head with context %}
-{% block title %}Message sent · Ron Systems AI{% endblock %}
-{% block main %}
-{{ page_head("Thanks, your message is on its way", "I'll read it and reply by email. If it's urgent, you can also email " ~ contact_email ~ " directly.") }}
-<section class="block" aria-label="Next">
-  <div class="wrap"><a class="link" href="{{ url_for('pages.home') }}">Back to the homepage</a></div>
-</section>
-{% endblock %}
