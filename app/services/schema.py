@@ -12,6 +12,11 @@ def _abs(endpoint, **values):
     return _site() + url_for(endpoint, **values)
 
 
+def _logo():
+    # The mascot, 512x512. Google shows a business logo in results when it's at least 112x112.
+    return {"@type": "ImageObject", "url": _abs("static", filename="img/logo.jpg"), "width": 512, "height": 512}
+
+
 def _same_as():
     return [v for v in current_app.config["SOCIAL"].values() if v]
 
@@ -51,6 +56,8 @@ def organization():
             "tech check-ups and roadmaps, workflow automation, practical AI, software selection, "
             "systems setup, custom tools and ongoing support."
         ),
+        "logo": _logo(),
+        "image": _logo()["url"],
         "founder": {"@id": _site() + "/#person"},
         "areaServed": AREA_SERVED,
         "knowsLanguage": "en",

@@ -51,7 +51,8 @@ Visitors arrive from Google and Bing, AI assistants (ChatGPT, Perplexity, Gemini
 - Resume: `docs/about-ron/ron-resume.pdf` (private, gitignored; includes a phone number).
 - Anonymized project proof from the resume: custom CRM (leads, payments, scheduling, SMS, analytics, catalog, promo codes); Python + n8n pipelines into replicated PostgreSQL; GPT agent integrated with a project-management platform; self-hosted business stack on Proxmox/TrueNAS; OCR/RAG/local-LLM document processing.
 - Initial design prototype with drafted copy: `docs/site-initial-design/`.
-- **Absent, never fabricate:** testimonials, client names or logos, quantified results, a professional photo, a logo, and a real booking URL.
+- **Absent, never fabricate:** testimonials, client names or logos, quantified results, and a professional photo.
+- **Brand mascot:** a cauldron character (navy and red), used as the business logo in structured data (`app/static/img/logo.jpg`, 512×512). The visible site keeps the RON wordmark.
 
 ## Product Principles
 
