@@ -44,8 +44,7 @@ The site work is done. It sits on the branch `feature/launch-prep`, which isn't 
 
 ### Small, optional
 
-- [ ] Decide what to do with `ronsystemsai-mascot.jpg`, committed in the project's top folder. The site uses its own copies in `app/static/img/`, so it can move to e.g. `docs/brand/` or be deleted
-- [ ] Refresh the social share image (`app/static/img/og-card.png`) to match the mascot branding
+- [ ] Refresh the social share image (`app/static/img/og-card.png`) to match the new logo mark
 - [ ] Add a line under "Choose a time" on `/book/`: "After you book, I'll email you to ask for the best number to call"
 - [ ] "Why I do this" on the About page still mentions "support desks"; reword if you'd rather not
 
