@@ -1,20 +1,58 @@
 name: CI
 
+# The checks every change must pass: on each pull request into dev or main, and again
+# in the Release workflow before anything is published. There's no test server, so the
+# last step starts the image the way the server does and loads a few pages instead.
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [dev, main]
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -r requirements-dev.txt
-      - run: ruff check app tests wsgi.py
-      - run: pytest -q
-      - name: Build image (no push)
-        run: docker build -t site:ci .
+      - run: pip install -r requirements.txt
+
+      - name: Lint
+        run: ruff check app tests wsgi.py
+
+      - name: Tests
+        run: pytest -q
+
+      - name: Check the compose file
+        run: |
+          touch docker/.env
+          docker compose -f docker/compose.yml config --quiet
+
+      - name: Build the image
+        run: docker build -f docker/Dockerfile -t site:ci .
+
+      - name: Start the image and load pages
+        run: |
+          docker run -d --name site -p 8000:8000 --read-only --tmpfs /tmp \
+            -e APP_ENV=production -e SECRET_KEY=ci site:ci
+          for i in $(seq 1 30); do
+            curl -fsS -o /dev/null http://127.0.0.1:8000/healthz && break
+            sleep 1
+          done
+          fail=0
+          for path in /healthz / /services/ /about/ /book/ /robots.txt /sitemap.xml /llms.txt; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8000$path")
+            echo "$code $path"
+            [ "$code" = 200 ] || fail=1
+          done
+          exit $fail
+
+      - name: Container logs
+        if: failure()
+        run: docker logs site || true

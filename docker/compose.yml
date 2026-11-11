@@ -1,10 +1,15 @@
 # Everything that runs on the VPS: Caddy (HTTPS), the website, and Umami (analytics).
 # Settings come from `.env` next to this file: the same file as the project's .env,
-# plus the two UMAMI_DB_* / UMAMI_APP_SECRET values the server needs.
+# plus the server-only values listed at the end of .env.example.
 #
-# Deploys run from GitHub Actions on every push to `main` (see .github/workflows/deploy.yml).
-# By hand, on the VPS:
-#   cd ~/ronsystemsai/deploy && docker compose up -d
+# ~/ronsystemsai on the server is a clone of the repo. Deploy or roll back a release with:
+#   cd ~/ronsystemsai/docker && ./deploy.sh v1.2.0
+# The release's version is kept in .env (IMAGE_TAG), so plain `docker compose ...` commands
+# keep running that same version.
+
+# Fixed name, so container and volume names don't depend on the folder this file sits in.
+name: ronsystemsai
+
 services:
   caddy:
     image: caddy:2

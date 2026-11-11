@@ -13,8 +13,7 @@ def _abs(endpoint, **values):
 
 
 def _logo():
-    # The mascot, 512x512. Google shows a business logo in results when it's at least 112x112.
-    return {"@type": "ImageObject", "url": _abs("static", filename="img/logo.jpg"), "width": 512, "height": 512}
+    return {"@type": "ImageObject", "url": _abs("static", filename="img/ron-mark.svg"), "width": 300, "height": 215}
 
 
 def _same_as():
@@ -30,6 +29,7 @@ def person():
         "alternateName": "Ron Tactay",
         "jobTitle": "IT systems, automation and AI consultant",
         "url": _abs("pages.about"),
+        "image": _abs("static", filename="img/ron-profile.webp"),
         "worksFor": {"@id": _site() + "/#org"},
         "homeLocation": {"@type": "Place", "name": "Manila, Philippines"},
         "knowsAbout": [

@@ -196,7 +196,7 @@ p { max-width: 68ch; }
   display: inline-flex; align-items: center; gap: .35ch; text-decoration: none;
   font-family: var(--f-display); font-weight: 800; font-size: 1.65rem; line-height: 1; letter-spacing: .01em; text-transform: uppercase;
 }
-.wordmark__mascot { align-self: center; height: 48px; width: auto; margin-right: .15ch; }
+.wordmark__symbol { align-self: center; height: 38px; width: auto; margin-right: .2ch; }
 .wordmark__ron { background: var(--red); color: var(--white); padding: .12em .28em .06em; }
 .wordmark__rest { color: var(--ink); }
 .nav { display: flex; align-items: center; gap: clamp(1rem, 2.2vw, 2rem); }
@@ -563,7 +563,7 @@ p { max-width: 68ch; }
 
 /* About */
 .about-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
-.about-head__mascot { width: clamp(150px, 17vw, 210px); height: auto; filter: drop-shadow(0 14px 16px rgba(23, 23, 27, .12)); }
+.about-head__portrait { width: clamp(190px, 22vw, 280px); height: auto; border-radius: 50%; filter: drop-shadow(0 14px 16px rgba(23, 23, 27, .12)); }
 .about-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
 .portrait { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: var(--shadow-paper); }
 
@@ -609,8 +609,8 @@ p { max-width: 68ch; }
   .receipt__item a { grid-template-columns: minmax(0, 1fr); }
   .receipt__more { display: none; }
   .about-head { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
-  .about-head__mascot { order: -1; width: 110px; }
-  .wordmark__mascot { height: 40px; }
+  .about-head__portrait { order: -1; width: min(55%, 210px); }
+  .wordmark__symbol { height: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }

@@ -84,7 +84,7 @@ Leave the body empty for a card-only case study.
 
 ## Build plan
 
-Branch: `feature/case-study-pages` from `develop` ([10-git-workflow.md](10-git-workflow.md)).
+Branch: `feature/case-study-pages` from `dev` ([10-git-workflow.md](10-git-workflow.md)).
 
 1. **Content.** Move the three `CASES` entries into `content/work/custom-crm.md`, `data-pipelines.md`, and `ai-agent.md` with no body yet (card only). Set `featured: true` on all three and add `service` slugs: custom CRM → `custom-business-tools`, data pipelines → `workflow-automation`, AI agent → `ai-assistants-and-agents`.
 2. **Loader** (`app/services/content_loader.py`). Add the `work` kind. Check the extra required fields (`tag`, `problem`, `built`, `result`) for that kind only. Mark each item with whether it has a story (non-empty body).
@@ -112,16 +112,16 @@ Branch: `feature/case-study-pages` from `develop` ([10-git-workflow.md](10-git-w
 
 ### From the browser (GitHub web editor)
 
-1. On github.com, switch to the `develop` branch and open `content/work/`.
+1. On github.com, switch to the `dev` branch and open `content/work/`.
 2. **Add file → Create new file**, name it `<slug>.md`, and paste the template above (or copy an existing case study). To update one, open its file and click the pencil icon.
-3. Commit to a **new branch** named `content/<short-name>` and open a pull request into `develop`.
-4. CI runs the tests. Merge into `develop`. There's no test site, so for anything more than a text tweak, preview it locally first (below).
-5. Open a pull request from `develop` into `main`. Merge, and it's live on **ronsystemsai.com**. Check `/work/` and the detail page there.
+3. Commit to a **new branch** named `content/<short-name>` and open a pull request into `dev`.
+4. CI runs the tests. Merge into `dev`. There's no test site, so for anything more than a text tweak, preview it locally first (below).
+5. Release it: a pull request from `dev` into `main`, a version tag, and `./deploy.sh` on the server ([10-git-workflow.md](10-git-workflow.md), "Releasing"). Then check `/work/` and the detail page on **ronsystemsai.com**.
 
 ### Locally
 
 ```bash
-git switch develop && git pull
+git switch dev && git pull
 git switch -c content/<short-name>
 # add or edit content/work/<slug>.md
 uv run flask --app wsgi run --debug   # preview at http://127.0.0.1:5000/work/
