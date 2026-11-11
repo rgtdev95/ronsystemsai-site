@@ -45,13 +45,15 @@ personal-site/
 │   ├── videos/*.md
 │   └── work/*.md
 ├── tests/                     # pytest: routes return 200, sitemap valid, noindex on test, etc.
-├── deploy/
+├── docker/                    # everything Docker
+│   ├── Dockerfile             # the website image (build from the project root: docker build -f docker/Dockerfile .)
+│   ├── Dockerfile.dockerignore  # what stays out of the image
+│   ├── compose.yml            # the one compose file: Caddy + website + Umami
 │   ├── Caddyfile
-│   └── compose.yml            # the one compose file: Caddy + website + Umami
-├── Dockerfile
+│   └── deploy.sh              # run on the server: ./deploy.sh v1.2.0
 ├── requirements.txt
 ├── .env.example               # the one settings file (copy to .env), no secrets
-├── .github/workflows/         # CI + deploy (see below)
+├── .github/workflows/         # ci.yml (checks) + release.yml (see below)
 ├── docs/                      # planning (this folder)
 │   ├── about-ron/             # private resume, gitignored
 │   └── site-initial-design/   # design reference
@@ -64,9 +66,9 @@ One environment for now: the live site. You develop and check changes on your ow
 | | **Your PC** | **Live** |
 |---|---|---|
 | URL | `http://127.0.0.1:5000` | `ronsystemsai.com` (+ `www` → redirect) |
-| How it runs | `uv run flask --app wsgi run --debug` | `deploy/compose.yml` on the VPS, deployed from `main` |
-| `APP_ENV` | `development` (the default) | `production` (set in `deploy/compose.yml`) |
-| Settings | `.env` in the project folder (loaded automatically) | `.env` next to `deploy/compose.yml`: the same file, plus the Umami database values |
+| How it runs | `uv run flask --app wsgi run --debug` | `docker/compose.yml` on the VPS, running a release tagged on `main` |
+| `APP_ENV` | `development` (the default) | `production` (set in `docker/compose.yml`) |
+| Settings | `.env` in the project folder (loaded automatically) | `.env` next to `docker/compose.yml`: the same file, plus the Umami database values |
 | Search indexing | — | Allowed, including AI crawlers |
 | Analytics (Umami) | Off | On |
 
@@ -77,11 +79,11 @@ One environment for now: the live site. You develop and check changes on your ow
 ```
 Internet ──► Caddy (ports 80/443, TLS)
                ├── www.ronsystemsai.com    ──► 301 redirect to ronsystemsai.com
-               ├── ronsystemsai.com        ──► web       (gunicorn :8000, image :<sha>)
+               ├── ronsystemsai.com        ──► web       (gunicorn :8000, image :<version>)
                └── stats.ronsystemsai.com  ──► umami     (:3000) + umami-db (PostgreSQL, internal only)
 ```
 
-- All four containers are defined in one file, `deploy/compose.yml`. Caddy owns ports 80/443 and is the only container exposed to the internet; the others publish no ports on the host.
+- All four containers are defined in one file, `docker/compose.yml`. Caddy owns ports 80/443 and is the only container exposed to the internet; the others publish no ports on the host.
 - Certificates: Caddy gets and renews Let's Encrypt certificates automatically. Keep its `/data` volume so certificates survive restarts. DNS A records for `@`, `www`, and `stats` point to the VPS.
 
 ### Caddyfile outline
@@ -122,16 +124,40 @@ The Content-Security-Policy is set by Flask. Booking opens Proton Calendar in a 
 - Secrets (`SECRET_KEY`, Umami's database password and app secret) live in `.env`, on your PC and on the VPS, never in git.
 - Containers run as a non-root user, with `restart: unless-stopped` and a `/healthz` endpoint for health checks.
 
-## CI/CD (GitHub Actions)
+## Releases and deploys
 
-| Trigger | Steps |
+Nothing deploys by itself. GitHub builds each release, and you put it on the server by hand (decision 18 in [08-open-decisions.md](08-open-decisions.md)). The branch flow is in [10-git-workflow.md](10-git-workflow.md).
+
+| When | What happens |
 |---|---|
-| Pull request to `develop` or `main` | Lint (ruff) → tests (pytest) → build the Docker image (no deploy) |
-| Push/merge to `develop` | Nothing. `develop` collects finished work until a release PR into `main` |
-| Push/merge to `main` | Tests → build → push to GitHub Container Registry (GHCR) as `<sha>` and `latest` → SSH to VPS → `docker compose pull web && docker compose up -d --remove-orphans` → submit the sitemap's pages to IndexNow (if `INDEXNOW_KEY` is set in `.env`) |
-| Rollback | On the VPS: `cd ~/ronsystemsai/deploy && IMAGE_TAG=<previous sha> docker compose up -d web` |
+| A pull request into `dev` or `main` | **CI**: lint → tests → compose file check → build the image → start it and load key pages. Nothing is published |
+| You push a tag like `v1.2.0` on `main` | **Release**: the same checks → image pushed to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → GitHub release with the merged PRs and the deploy command |
+| You run `./deploy.sh v1.2.0` on the server | Checks out that tag, so `compose.yml` and the `Caddyfile` match the release → records `IMAGE_TAG=v1.2.0` in `.env` → pulls the image and restarts the site, waiting until it's healthy (a few seconds of downtime) → checks `https://ronsystemsai.com/healthz` → asks search engines to recrawl through IndexNow, if `INDEXNOW_KEY` is set |
+| Rollback | The same command with an older version: `./deploy.sh v1.1.0` |
 
-The GitHub repo holds a deploy SSH key and the VPS host as **repository secrets**. The deploy user on the VPS can only run Docker Compose in the site directory.
+GitHub holds no server keys or secrets: the workflows only use GitHub's built-in token, and nothing in GitHub can reach the VPS.
+
+### The server
+
+`~/ronsystemsai` is a clone of the GitHub repo. The repo is public, so it needs no deploy key. The settings live in `~/ronsystemsai/docker/.env`: your PC's `.env` plus the server-only values at the end of `.env.example`. Set it up once:
+
+```bash
+git clone https://github.com/rgtdev95/ronsystemsai-site.git ~/ronsystemsai
+cd ~/ronsystemsai/docker
+nano .env                 # paste your PC's .env, then fill in the server-only values
+./deploy.sh v1.0.0        # any released version
+```
+
+Handy commands, run in `~/ronsystemsai/docker`:
+
+| To | Run |
+|---|---|
+| See which version is live | `grep IMAGE_TAG .env` |
+| Read the logs | `docker compose logs -f web` (or `caddy`, `umami`) |
+| Restart everything | `docker compose up -d` (keeps the version in `.env`) |
+| Update Caddy, Umami and PostgreSQL every month or so | `docker compose pull && docker compose up -d` |
+
+`compose.yml` fixes the Compose project name as `ronsystemsai`, so containers and volumes are named `ronsystemsai_*` whatever the folder is called. Keep the `ronsystemsai_caddy_data` and `ronsystemsai_umami_db` volumes: they hold the HTTPS certificates and Umami's data.
 
 ## Security and performance baseline
 

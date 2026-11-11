@@ -3,7 +3,16 @@
 {% block title %}About Rolando “Ron” Tactay · Ron Systems AI{% endblock %}
 {% block description %}Rolando “Ron” Tactay, IT engineer with 11+ years across finance, healthcare, manufacturing, MSPs and startups, helping small businesses fix their tools.{% endblock %}
 {% block main %}
-{{ page_head("Hi, I'm Ron", "Rolando “Ron” Tactay, an IT engineer with 11+ years keeping systems running across finance, healthcare, manufacturing, IT service providers (MSPs) and startups. I help small and medium businesses fix the tools that slow them down, and I'll tell you honestly when something isn't worth fixing.") }}
+<header class="page-head">
+  <div class="rail" aria-hidden="true"></div>
+  <div class="page-head__inner about-head">
+    <div>
+      <h1 class="display display--xl">Hi, I'm Ron</h1>
+      <p class="lede">Rolando “Ron” Tactay, an IT engineer with 11+ years keeping systems running across finance, healthcare, manufacturing, IT service providers (MSPs) and startups. I help small and medium businesses fix the tools that slow them down, and I'll tell you honestly when something isn't worth fixing.</p>
+    </div>
+    <img class="about-head__portrait" src="{{ asset('img/ron-profile.webp') }}" alt="Ron Tactay" width="560" height="560">
+  </div>
+</header>
 <section class="block" aria-labelledby="story">
   <div class="wrap about-grid">
     <div class="prose">

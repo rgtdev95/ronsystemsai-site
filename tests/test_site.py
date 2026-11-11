@@ -45,6 +45,23 @@ def test_jsonld_is_valid_json(client):
     assert {"ProfessionalService", "Person", "WebSite", "FAQPage"} <= types
 
 
+def test_business_structured_data_has_logo(client):
+    html = client.get("/").get_data(as_text=True)
+    blocks = [json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)]
+    org = next(b for b in blocks if b["@type"] == "ProfessionalService")
+    logo_path = org["logo"]["url"].split("://", 1)[-1].split("/", 1)[1]
+    assert client.get("/" + logo_path).status_code == 200, "logo file must be served"
+    assert org["logo"]["width"] >= 112 and org["logo"]["height"] >= 112
+
+
+def test_person_structured_data_has_a_served_photo(client):
+    html = client.get("/about/").get_data(as_text=True)
+    blocks = [json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)]
+    person = next(b for b in blocks if b["@type"] == "Person")
+    photo_path = person["image"].split("://", 1)[-1].split("/", 1)[1]
+    assert client.get("/" + photo_path).status_code == 200
+
+
 def test_no_prices_or_timezone_claims(client):
     for path in PAGES:
         text = client.get(path).get_data(as_text=True)

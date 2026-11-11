@@ -1,4 +1,0 @@
--r requirements.txt
-pytest==8.4.2
-ruff==0.13.2
-python-dotenv==1.2.4   # lets `flask run` load .env automatically (local only; Docker gets env from compose)
