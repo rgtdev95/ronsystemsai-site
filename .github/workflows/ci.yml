@@ -4,8 +4,11 @@ name: CI
 # in the Release workflow before anything is published. There's no test server, so the
 # last step starts the image the way the server does and loads a few pages instead.
 on:
-  pull_request:
-    branches: [dev, main]
+  # Paused on 2026-11-12: the GitHub account has a billing lock, so no Actions job can start
+  # (decision 19 in docs/08-open-decisions.md). Run the checks locally until it's cleared.
+  # To turn CI back on, uncomment the two lines below.
+  # pull_request:
+  #   branches: [dev, main]
   workflow_call:
 
 permissions:

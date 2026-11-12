@@ -33,4 +33,10 @@ All decisions made as of 2026-09-30.
 
 | # | Decision | Choice | Notes |
 |---|---|---|---|
-| 18 | **Releases and deploys** | **A version tag on `main` builds the image and the GitHub release; deploying is manual, with `docker/deploy.sh <version>` on the server** | Replaces the automatic SSH deploy on every push to `main`. Every live version is a named release with notes, GitHub holds no server keys, and a rollback is the same command with an older version. The server is a clone of the repo, so `compose.yml` and the `Caddyfile` always match the release. There's no dev server yet, so CI starts the image and loads pages instead. See [10-git-workflow.md](10-git-workflow.md) and [09-architecture-and-deployment.md](09-architecture-and-deployment.md#releases-and-deploys). |
+| 18 | **Releases and deploys** | **A version tag on `main` builds the image and the GitHub release; deploying is manual, with `docker/deploy.sh <version>` on the server** | Replaces the automatic SSH deploy on every push to `main`. Every live version is a named release with notes, GitHub holds no server keys, and a rollback is the same command with an older version. The server is a clone of the repo, so `compose.yml` and the `Caddyfile` always match the release. There's no dev server yet, so CI starts the image and loads pages instead. Steps: [13-releasing.md](13-releasing.md). See also [10-git-workflow.md](10-git-workflow.md) and [09-architecture-and-deployment.md](09-architecture-and-deployment.md#releases-and-deploys). |
+
+## Decided (2026-11-12)
+
+| # | Decision | Choice | Notes |
+|---|---|---|---|
+| 19 | **CI paused** (temporary) | **CI doesn't run on pull requests for now. Run the lint and tests locally before merging** | The GitHub account has a billing lock (since at least 2026-10-19), so GitHub starts no Actions job: every run "failed" within seconds with no steps run. Pausing stops the failed checks on every PR. Self-hosted runners were ruled out: reports say the lock blocks them too, and on a public repo anyone's pull request would run code on Ron's machine. The Release workflow is blocked by the same lock. To undo: clear the lock (GitHub → Settings → Billing and licensing, or GitHub Support), uncomment the `pull_request` trigger in `.github/workflows/ci.yml`, and add the `checks` status to the ruleset ([13-releasing.md](13-releasing.md), step 2). |

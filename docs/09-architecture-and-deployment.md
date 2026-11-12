@@ -126,11 +126,11 @@ The Content-Security-Policy is set by Flask. Booking opens Proton Calendar in a 
 
 ## Releases and deploys
 
-Nothing deploys by itself. GitHub builds each release, and you put it on the server by hand (decision 18 in [08-open-decisions.md](08-open-decisions.md)). The branch flow is in [10-git-workflow.md](10-git-workflow.md).
+Nothing deploys by itself. GitHub builds each release, and you put it on the server by hand (decision 18 in [08-open-decisions.md](08-open-decisions.md)). The branch flow is in [10-git-workflow.md](10-git-workflow.md), and the step-by-step runbook in [13-releasing.md](13-releasing.md).
 
 | When | What happens |
 |---|---|
-| A pull request into `dev` or `main` | **CI**: lint → tests → compose file check → build the image → start it and load key pages. Nothing is published |
+| A pull request into `dev` or `main` | **CI**: lint → tests → compose file check → build the image → start it and load key pages. Nothing is published. **Paused for now** (decision 19 in [08-open-decisions.md](08-open-decisions.md)) |
 | You push a tag like `v1.2.0` on `main` | **Release**: the same checks → image pushed to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → GitHub release with the merged PRs and the deploy command |
 | You run `./deploy.sh v1.2.0` on the server | Checks out that tag, so `compose.yml` and the `Caddyfile` match the release → records `IMAGE_TAG=v1.2.0` in `.env` → pulls the image and restarts the site, waiting until it's healthy (a few seconds of downtime) → checks `https://ronsystemsai.com/healthz` → asks search engines to recrawl through IndexNow, if `INDEXNOW_KEY` is set |
 | Rollback | The same command with an older version: `./deploy.sh v1.1.0` |
@@ -139,23 +139,7 @@ GitHub holds no server keys or secrets: the workflows only use GitHub's built-in
 
 ### The server
 
-`~/ronsystemsai` is a clone of the GitHub repo. The repo is public, so it needs no deploy key. The settings live in `~/ronsystemsai/docker/.env`: your PC's `.env` plus the server-only values at the end of `.env.example`. Set it up once:
-
-```bash
-git clone https://github.com/rgtdev95/ronsystemsai-site.git ~/ronsystemsai
-cd ~/ronsystemsai/docker
-nano .env                 # paste your PC's .env, then fill in the server-only values
-./deploy.sh v1.0.0        # any released version
-```
-
-Handy commands, run in `~/ronsystemsai/docker`:
-
-| To | Run |
-|---|---|
-| See which version is live | `grep IMAGE_TAG .env` |
-| Read the logs | `docker compose logs -f web` (or `caddy`, `umami`) |
-| Restart everything | `docker compose up -d` (keeps the version in `.env`) |
-| Update Caddy, Umami and PostgreSQL every month or so | `docker compose pull && docker compose up -d` |
+`~/ronsystemsai` is a clone of the GitHub repo. The repo is public, so it needs no deploy key. The settings live in `~/ronsystemsai/docker/.env`: your PC's `.env` plus the server-only values at the end of `.env.example`. First-time setup, everyday commands and what to do when something goes wrong: [13-releasing.md](13-releasing.md).
 
 `compose.yml` fixes the Compose project name as `ronsystemsai`, so containers and volumes are named `ronsystemsai_*` whatever the folder is called. Keep the `ronsystemsai_caddy_data` and `ronsystemsai_umami_db` volumes: they hold the HTTPS certificates and Umami's data.
 

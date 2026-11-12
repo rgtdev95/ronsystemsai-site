@@ -2,20 +2,24 @@
 
 ## Next session: what's waiting (as of 2026-11-11)
 
-The site work is done. It sits on the branch `feature/launch-prep`, which isn't merged yet. Deploys are now manual: a version tag on `main` builds the release, and `docker/deploy.sh` puts it on the server (decision 18). These are the open items, roughly in order.
+The site work is done. It sits on the branch `feature/launch-prep`, uncommitted. Deploys are now manual: a version tag on `main` builds the release, and `docker/deploy.sh` puts it on the server (decision 18). These are the open items, roughly in order.
 
-### First: GitHub, the first release and the server
+### First: branches, the first release and the server
 
-- [ ] **Merge the work:** PR `feature/launch-prep` → `dev`, then the release PR `dev` → `main`, then tag the first release, e.g. `v1.0.0` ([10-git-workflow.md](10-git-workflow.md), "Releasing"). The `ec8754a` push to `main` on 2026-11-08 ran the old auto-deploy, which most likely failed at the server step. The old containers kept running, so nothing to fix there
-- [ ] **GitHub settings** ([10-git-workflow.md](10-git-workflow.md), "GitHub settings to turn on"): protect `main` and `dev` and require the `checks` status, make `dev` the default branch, delete the old `VPS_HOST` / `VPS_USER` / `VPS_SSH_KEY` secrets and the `prod` environment
-- [ ] **Make the image public** after the first release (GitHub profile → Packages → `ronsystemsai-site` → Package settings → Change visibility), so the server can pull it without logging in
-- [ ] **Set up the server** ([09-architecture-and-deployment.md](09-architecture-and-deployment.md#the-server)):
-  - stop the old containers first, because they hold ports 80 and 443: `docker ps` to see them, then `docker compose -f <file> down` for each old compose file in `~/ronsystemsai/deploy` (or `docker stop <name>`)
-  - if `~/ronsystemsai` is already a git clone, run `git fetch` there. If not, move it aside with `mv ~/ronsystemsai ~/ronsystemsai-old` and clone the repo there
-  - create `~/ronsystemsai/docker/.env`: your PC's `.env`, plus new values for `UMAMI_DB_PASSWORD` and `UMAMI_APP_SECRET`. Umami starts with a fresh database (it wasn't recording visits yet; its old data stays in the old `deploy_*` volumes), so log in with Umami's default `admin` / `umami` and change the password straight away
-  - `cd ~/ronsystemsai/docker && ./deploy.sh v1.0.0`. Caddy fetches new HTTPS certificates on the first start, which can take a minute
-  - once it works, delete `~/ronsystemsai-old` (if you made it) and the old `.env.prod`, `.env.test` and `.env.proxy` files, and the old volumes (`docker volume ls`, then `docker volume rm deploy_...`). Revoke the Proton SMTP token if you ever created one
-- [ ] Optional: delete the `test` DNS record (the test site is gone)
+- [ ] **Tidy the branches and push the work** (on your PC, from the project folder):
+
+  ```bash
+  git branch -f main origin/main                  # local main back to GitHub's version
+  git branch -d checkout list                     # two stray branches
+  git push origin --delete feature/initial-site   # old branch, already merged
+  git push origin origin/main:dev                 # bring dev up to date with main
+  git add -A
+  git commit -m "feat: launch prep: branding, docker folder, manual releases"
+  git push -u origin feature/launch-prep
+  ```
+
+- [ ] **Clear the GitHub billing lock.** No GitHub Actions job can run until it's cleared: CI is paused and the Release workflow is blocked (decision 19). Check GitHub → Settings → Billing and licensing; if nothing is owed there, contact GitHub Support. Then uncomment the `pull_request` trigger in `.github/workflows/ci.yml` and add the `checks` status to the ruleset
+- [ ] **First release and server setup:** follow [13-releasing.md](13-releasing.md), "First release (one time)", steps 1–12. The `ec8754a` push to `main` on 2026-11-08 ran the old auto-deploy, which most likely failed at the server step. The old containers kept running, so there's nothing to fix there
 
 ### Proton
 

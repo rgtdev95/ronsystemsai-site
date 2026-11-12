@@ -28,7 +28,7 @@ Delete short-lived branches once they're merged (the button on the PR, or `git b
 
 | When | Workflow | What it does |
 |---|---|---|
-| A pull request into `dev` or `main` | **CI** (`.github/workflows/ci.yml`) | The checks below |
+| A pull request into `dev` or `main` | **CI** (`.github/workflows/ci.yml`) | The checks below. **Paused for now** (decision 19): run the lint and tests locally before merging |
 | You push a tag like `v1.2.0` | **Release** (`.github/workflows/release.yml`) | The same checks, then: checks the tag is on `main` → builds the image and pushes it to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → creates the GitHub release, with the merged PRs listed and the deploy command |
 | A push or merge to `dev` or `main` | nothing | The PR was already checked |
 
@@ -55,28 +55,7 @@ git push -u origin feature/case-study-pages
 
 ## Releasing
 
-1. Open a PR from `dev` into `main`, titled like "Release v1.2.0". CI runs again. Merge it with a **merge commit**.
-2. Tag `main` and push the tag:
-
-   ```bash
-   git switch main && git pull
-   git tag v1.2.0 && git push origin v1.2.0
-   ```
-
-3. On GitHub, open **Actions → Release** and wait for green (about 3 minutes). The release then shows on the repo's **Releases** page.
-4. Put it on the server: `ssh` in, then `cd ~/ronsystemsai/docker && ./deploy.sh v1.2.0` (details in [09-architecture-and-deployment.md](09-architecture-and-deployment.md#releases-and-deploys)). To roll back, run the same command with the previous version.
-
-Release from the command line, not GitHub's "Draft a new release" button: the workflow creates the release itself, after the image is pushed.
-
-**Versions** are `vMAJOR.MINOR.PATCH`:
-
-- **Patch** (`v1.2.1`): fixes and copy edits
-- **Minor** (`v1.3.0`): new pages, sections, articles, case studies
-- **Major** (`v2.0.0`): a redesign or a big restructure
-
-`v1.0.0` is the public launch.
-
-**Hotfix:** branch `hotfix/<name>` from `main`, PR into `main`, merge, tag a patch version, deploy. Then open a PR from `main` into `dev` so `dev` has the fix too.
+In short: a PR from `dev` into `main` (merge commit), a version tag on `main`, a wait for the Release workflow, then `./deploy.sh <version>` on the server. The full steps, including the first-time setup, hotfixes, rollbacks and version numbers, are in [13-releasing.md](13-releasing.md).
 
 ## Conventions
 
@@ -85,12 +64,6 @@ Release from the command line, not GitHub's "Draft a new release" button: the wo
 - **Merge style:** squash-merge short-lived branches into `dev` (one commit per change). Use a merge commit for `dev` → `main` and `main` → `dev`, so releases are easy to see and the branches stay in step.
 - **Never commit:** `.env` (only `.env.example`), `docs/about-ron/`, secrets, or client data.
 
-## GitHub settings to turn on
+## GitHub settings
 
-- **Branch protection** for `main` and `dev` (Settings → Branches → Add branch ruleset, or a classic rule):
-  - require a pull request before merging, with **0 approvals** (you can't approve your own PR)
-  - require the **`checks`** status check to pass. It appears in the list after CI has run once
-  - block force pushes and deletion
-- **Default branch: `dev`** (Settings → General), so new PRs target it.
-- **Image visibility:** after the first release, open the `ronsystemsai-site` package (your GitHub profile → Packages → Package settings → Change visibility) and make it **public**, so the server can pull it without a login. The repo is public already, so this reveals nothing new. To keep it private instead, run `docker login ghcr.io` once on the server with a token that has `read:packages`.
-- **No repository secrets are needed.** The workflows use GitHub's built-in token. Delete the old `VPS_HOST`, `VPS_USER` and `VPS_SSH_KEY` secrets and the `prod` environment (Settings → Secrets and variables → Actions; Settings → Environments).
+Branch protection for `main` and `dev` (requiring the `checks` status), `dev` as the default branch, the image's visibility and removing the old server secrets: step 2 and step 6 of [13-releasing.md](13-releasing.md#first-release-one-time).

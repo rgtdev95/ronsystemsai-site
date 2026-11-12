@@ -27,6 +27,7 @@ personal-site/
     ├── 10-git-workflow.md        ← branches, releases, conventions
     ├── 11-case-studies.md        ← case study pages: plan, template, how to add one
     ├── 12-booking-follow-up.md   ← after a booking: manual email template + automation idea
+    ├── 13-releasing.md           ← step by step: first release, every release, hotfix, rollback
     ├── about-ron/                ← private resume (gitignored)
     └── site-initial-design/      ← first design prototype (reference only)
 ```
@@ -55,7 +56,7 @@ uv run ruff check app tests wsgi.py          # lint
 
 ## Branches, releases and deploys
 
-Work goes from short-lived branches into `dev`, and from `dev` into `main`. CI checks every pull request. To release, tag `main` (`git tag v1.2.0 && git push origin v1.2.0`). GitHub then builds the image and publishes the release. Deploy it on the server with `cd ~/ronsystemsai/docker && ./deploy.sh v1.2.0`. Details: [docs/10-git-workflow.md](docs/10-git-workflow.md) and [docs/09-architecture-and-deployment.md](docs/09-architecture-and-deployment.md#releases-and-deploys).
+Work goes from short-lived branches into `dev`, and from `dev` into `main`. CI checks every pull request (paused for now: [decision 19](docs/08-open-decisions.md)). To release, tag `main` (`git tag v1.2.0 && git push origin v1.2.0`). GitHub then builds the image and publishes the release. Deploy it on the server with `cd ~/ronsystemsai/docker && ./deploy.sh v1.2.0`. Step by step: [docs/13-releasing.md](docs/13-releasing.md).
 
 Everything on the server is in one file, [docker/compose.yml](docker/compose.yml): Caddy, the website and Umami.
 
