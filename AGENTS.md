@@ -30,7 +30,7 @@ docker build -f docker/Dockerfile .       # from the project root
 
 | What | Where |
 |---|---|
-| Page copy (hero, services, process, FAQs, case studies, tools) | `app/site_content.py` |
+| Page copy (hero, services, process, FAQs, tools) | `app/site_content.py` |
 | Routes | `app/routes/pages.py`, `content.py` (articles/videos), `seo.py` (robots, sitemap, llms.txt, icons, IndexNow key) |
 | Structured data (JSON-LD) | `app/services/schema.py` |
 | Templates | `app/templates/` (`base.html`, `pages/`, `partials/macros.html`, `seo/`) |

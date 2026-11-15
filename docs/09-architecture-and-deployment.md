@@ -25,8 +25,8 @@ personal-site/
 │   ├── __init__.py            # create_app() factory, loads config by APP_ENV
 │   ├── config.py              # BaseConfig / TestConfig / ProductionConfig
 │   ├── routes/
-│   │   ├── pages.py           # home, services, work, process, about, faq, book, legal (/contact/ redirects to /book/)
-│   │   ├── content.py         # /resources/<slug>, /videos/<slug>, /work/<slug>
+│   │   ├── pages.py           # home, services, process, about, faq, book, legal (/contact/ → /book/, /work/ → /resources/)
+│   │   ├── content.py         # /resources/<slug>, /videos/<slug>
 │   │   └── seo.py             # sitemap.xml, robots.txt, llms.txt, security.txt
 │   ├── services/
 │   │   ├── content_loader.py  # reads Markdown + front-matter, caches

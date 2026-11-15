@@ -36,7 +36,7 @@ def sitemap():
     # Pages built from code have none; Markdown items use their published/updated dates.
     site = current_app.config["SITE_URL"]
     urls = [(url_for(e), None) for e in (
-        "pages.home", "pages.services", "pages.process", "pages.work",
+        "pages.home", "pages.services", "pages.process",
         "pages.about", "pages.faq", "pages.book", "pages.privacy",
         "pages.terms",
     )]

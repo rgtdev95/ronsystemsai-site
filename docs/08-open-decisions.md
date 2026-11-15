@@ -40,3 +40,9 @@ All decisions made as of 2026-09-30.
 | # | Decision | Choice | Notes |
 |---|---|---|---|
 | 19 | **CI paused** (temporary) | **CI doesn't run on pull requests for now. Run the lint and tests locally before merging** | The GitHub account has a billing lock (since at least 2026-10-19), so GitHub starts no Actions job: every run "failed" within seconds with no steps run. Pausing stops the failed checks on every PR. Self-hosted runners were ruled out: reports say the lock blocks them too, and on a public repo anyone's pull request would run code on Ron's machine. The Release workflow is blocked by the same lock. To undo: clear the lock (GitHub → Settings → Billing and licensing, or GitHub Support), uncomment the `pull_request` trigger in `.github/workflows/ci.yml`, and add the `checks` status to the ruleset ([13-releasing.md](13-releasing.md), step 2). |
+
+## Decided (2026-11-15)
+
+| # | Decision | Choice | Notes |
+|---|---|---|---|
+| 20 | **Case studies off the site; articles take their place** | **The three case-study cards are removed from the homepage and `/work/`. The homepage's "Recent work" section is now "Latest articles" (the three newest, linking to `/resources/`). `/work/` redirects to `/resources/`, and the menus say "Articles" instead of "Work"** | The cards had no detail pages or measured results behind them ([11-case-studies.md](11-case-studies.md)), and the first article ("How I chose the tools my business runs on") is stronger proof of how Ron works. Articles now use the "filed job" card design (every article in the homepage section, and the newest on `/resources/`), so it stays ready for case studies too; the three drafts are in git history (`CASES` in `app/site_content.py`). The homepage section hides itself when there are no articles. |

@@ -2,6 +2,7 @@ from flask import Blueprint, abort, redirect, render_template, url_for
 
 from .. import site_content as C
 from ..services import schema
+from ..services.content_loader import all_items
 
 bp = Blueprint("pages", __name__)
 
@@ -11,6 +12,7 @@ def home():
     return render_template(
         "pages/home.html",
         C=C,
+        articles=all_items("resources")[:3],
         jsonld=[schema.organization(), schema.person(), schema.website(), schema.faq(C.FAQS)],
     )
 
@@ -54,11 +56,8 @@ def process():
 
 @bp.get("/work/")
 def work():
-    return render_template(
-        "pages/work.html",
-        C=C,
-        jsonld=[schema.organization(), schema.breadcrumbs([("Work", "pages.work", {})])],
-    )
+    """Case studies were taken down (decision 20); articles took their place. Keeps old links working."""
+    return redirect(url_for("content.resources"), code=301)
 
 
 @bp.get("/about/")

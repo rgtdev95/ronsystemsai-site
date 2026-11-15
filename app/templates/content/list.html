@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "partials/macros.html" import page_head, book_close with context %}
+{% from "partials/macros.html" import page_head, book_close, content_list with context %}
 {% block title %}{{ meta.title }} · Ron Systems AI{% endblock %}
 {% block description %}{% if kind == 'videos' %}Walkthroughs of real automations, AI tools and tech decisions for small businesses.{% else %}Plain-English guides on automation, AI and business systems for small and medium businesses.{% endif %}{% endblock %}
 {% block main %}
@@ -7,15 +7,7 @@
 <section class="block" aria-label="{{ meta.title }}">
   <div class="wrap">
     {% if items %}
-    <ul class="list-items">
-      {% for i in items %}
-      <li><a href="{{ url_for(meta.item, slug=i.slug) }}">
-        <h2>{{ i.title }}</h2>
-        <p>{{ i.description }}</p>
-        <time datetime="{{ i.published }}">{{ i.published }}</time>
-      </a></li>
-      {% endfor %}
-    </ul>
+    {{ content_list(items, kind) }}
     {% else %}
     <div class="empty"><strong>First {{ 'videos' if kind == 'videos' else 'guides' }} coming soon</strong>In the meantime, the <a class="link" href="{{ url_for('pages.faq') }}">common questions</a> page answers the most frequent ones.</div>
     {% endif %}

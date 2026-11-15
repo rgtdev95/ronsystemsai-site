@@ -30,7 +30,7 @@ The site work is done. It sits on the branch `feature/launch-prep`, uncommitted.
 ### Content (biggest effect on search and AI visibility)
 
 - [ ] **Articles:** write the first 2–3 from the backlog in [04-site-structure.md](04-site-structure.md). AI assistants mostly cite pages that answer real questions
-- [ ] **Case studies:** details for the three existing ones (type and size of business, what it was like before, key decisions, any measured results), so they can get full pages ([11-case-studies.md](11-case-studies.md))
+- [ ] **Case studies (on hold, decision 20):** details for the three drafts (type and size of business, what it was like before, key decisions, any measured results), so they can get full pages ([11-case-studies.md](11-case-studies.md))
 - [x] **A real photo of you.** On the About page and in the Person structured data (`app/static/img/ron-profile.webp`, 560 px; original in `docs/brand/`)
 - [ ] Optional: what you did in manufacturing, at the MSP and at the startup, if you want more than the one-line mention on the About page and homepage
 

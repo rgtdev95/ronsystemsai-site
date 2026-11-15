@@ -64,7 +64,7 @@ Everything on the server is in one file, [docker/compose.yml](docker/compose.yml
 
 | What | Where |
 |---|---|
-| Page copy (services, process, FAQs, case studies) | `app/site_content.py` |
+| Page copy (services, process, FAQs) | `app/site_content.py` |
 | Articles and videos | `content/resources/*.md`, `content/videos/*.md` (see `content/README.md`) |
 | Templates | `app/templates/` |
 | Styles / scripts | `app/static/css/site.css`, `app/static/js/site.js` |

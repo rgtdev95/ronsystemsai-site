@@ -1,21 +1,36 @@
-"""Markdown content with YAML front-matter: content/<kind>/<slug>.md
+"""Markdown content with YAML front-matter: content/<kind>/<slug>.md, or in a folder of its own,
+content/<kind>/<folder>/<slug>.md, next to its drafts and notes. The folder name isn't part of the URL.
+Files and folders starting with "_" or "." are skipped.
 
 Required front-matter: title, description, published (YYYY-MM-DD).
 Optional: updated, draft (true hides it), youtube_id (videos).
+In the body, :logo-<slug>: shows the tool mark t-<slug> from partials/tool-logos.svg.
 """
 import os
+import re
 from datetime import date
 from functools import lru_cache
+from html import unescape
 
 import markdown
 import yaml
 from flask import current_app
 
 REQUIRED = ("title", "description", "published")
+LOGO = re.compile(r":logo-([a-z0-9]+):( [^\s<]+)?")
+H2 = re.compile(r"<h2[^>]*>(.*?)</h2>", re.S)
+TAG = re.compile(r"<[^>]+>")
+
+
+def _logo(m):
+    mark = f'<svg class="tool-mark" aria-hidden="true" focusable="false"><use href="#t-{m[1]}"/></svg>'
+    # The mark stays on the same line as the word after it, so a wrapped cell never leaves it behind.
+    return f'<span class="tool-name">{mark}{m[2].lstrip()}</span>' if m[2] else mark
 
 
 def _parse(path):
-    with open(path, encoding="utf-8") as fh:
+    # utf-8-sig: Windows editors often save a byte-order mark, which would hide the opening "---".
+    with open(path, encoding="utf-8-sig") as fh:
         raw = fh.read()
     if not raw.startswith("---"):
         raise ValueError(f"{path}: missing front-matter")
@@ -28,8 +43,30 @@ def _parse(path):
         if isinstance(meta.get(key), date):
             meta[key] = meta[key].isoformat()
     meta["slug"] = os.path.splitext(os.path.basename(path))[0]
-    meta["html"] = markdown.markdown(body, extensions=["extra", "sane_lists", "toc"])
+    meta["path"] = path
+    html = markdown.markdown(body, extensions=["extra", "sane_lists", "toc"])
+    meta["logos"] = sorted({m[1] for m in LOGO.finditer(html)})
+    meta["html"] = LOGO.sub(_logo, html)
+    # For the featured card: the article's questions (its h2s) and a reading time at about 200 words a minute.
+    meta["headings"] = [unescape(TAG.sub("", h)).strip() for h in H2.findall(html)]
+    meta["minutes"] = max(1, round(len(unescape(TAG.sub(" ", html)).split()) / 200))
     return meta
+
+
+def _files(folder):
+    """The .md files in folder and in its subfolders, one level down."""
+    for name in sorted(os.listdir(folder)):
+        path = os.path.join(folder, name)
+        if name.startswith(("_", ".")):
+            continue
+        if os.path.isdir(path):
+            yield from (
+                os.path.join(path, sub)
+                for sub in sorted(os.listdir(path))
+                if sub.endswith(".md") and not sub.startswith(("_", "."))
+            )
+        elif name.endswith(".md"):
+            yield path
 
 
 @lru_cache(maxsize=8)
@@ -37,13 +74,14 @@ def _load(content_dir, kind, _debug_bust):
     folder = os.path.join(content_dir, kind)
     if not os.path.isdir(folder):
         return ()
-    items = [
-        _parse(os.path.join(folder, name))
-        for name in sorted(os.listdir(folder))
-        if name.endswith(".md") and not name.startswith("_")
-    ]
+    items = [_parse(path) for path in _files(folder)]
+    slugs = [i["slug"] for i in items]
+    dupes = sorted({s for s in slugs if slugs.count(s) > 1})
+    if dupes:
+        raise ValueError(f"content/{kind}: more than one file named {', '.join(dupes)}.md")
     items = [i for i in items if not i.get("draft")]
-    return tuple(sorted(items, key=lambda i: i["published"], reverse=True))
+    # Newest first. On the same date, the later file path first (article-2/ before article-1/).
+    return tuple(sorted(items, key=lambda i: (i["published"], i["path"]), reverse=True))
 
 
 def all_items(kind):

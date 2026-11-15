@@ -14,8 +14,7 @@ The current design (`docs/site-initial-design/`) is a single long page. That wor
   /services/systems-setup/
   /services/custom-business-tools/
   /services/ongoing-support/
-/work/                          Case studies (anonymized)
-  /work/<case-study-slug>/
+/work/                          Redirects to /resources/ (case studies on hold, decision 20)
 /process/                       How we work together (8 stages)
 /ways-to-start/                 Engagement models (no prices)
 /about/                         Rolando: story, background, credentials, photo

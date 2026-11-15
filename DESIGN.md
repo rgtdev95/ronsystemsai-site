@@ -194,7 +194,7 @@ All three families are self-hosted variable fonts.
 - **Headline** (800, clamp(2.4rem, 4.6vw, 4rem), 0.94): section headings; a smaller step (clamp(1.9rem, 3.2vw, 2.6rem)) for secondary sections.
 - **Title** (800, 1.5 to 1.9rem, 1 to 1.05, uppercase): docket titles, receipt item names, order-type names, filed-job titles, list and service-index headings, prose h2 (2rem).
 - **Lede** (400, clamp(1.125rem, 1.6vw, 1.3rem), 1.55, `ink-2`): the paragraph under a page or section title, max 38em.
-- **Body** (400, 1.0625rem, 1.6; 1rem under 640px): all prose, capped at 68ch.
+- **Body** (400, 1.0625rem, 1.6; 1rem under 640px): all prose, capped at 68ch (articles and videos: 90ch).
 - **Label** (700, 0.7 to 0.78rem, 0.06 to 0.07em tracking, uppercase, Hanken Grotesk): field labels, footer heads, tools terms, meta lines, order-type format, flags and tags.
 - **Docket** (Martian Mono, 0.66 to 0.8rem via a per-docket size variable, tabular numerals; bars and labels 700 uppercase at 0.05em): docket lines, bars, receipt head and total, slip heads, filed-job dt and tag, done tag.
 
@@ -247,7 +247,7 @@ The system has no generic cards. Containers are paper objects:
 - **Docket:** white with grain, serrated bottom, steel clip on top, reversed ink bar (number left, title or "Free" right), dashed-rule lines, mono throughout. Variants: stage dockets on the process rail, and the booking ticket with a checklist, meta list, and stub.
 - **Receipt:** serrated top and bottom, mono head with the display brand, double-rule dividers (3px double ink), each line a link with a display name, description, and a 44px arrow box that reverses and nudges on hover. Mono total and footer.
 - **Slip on spike:** white slip with a punched hole, impaled on a steel rod, slight rotation, mono uppercase head, body text below.
-- **Filed job:** a horizontal docket with a serrated right edge, reversed ink side panel (display title, mono tag), and a three-column Problem / What I built / Result body. Only the Result label is red.
+- **Filed job:** a horizontal docket with a serrated right edge, reversed ink side panel (display title, mono tag), and a three-column body. Articles use it: every article in the homepage's Latest articles (up to three), and the newest article or video on its list page, with older items as plain rows below (title and date on the side; In short / What's inside / Read it, none in red). Case studies, when they return, use Problem / What I built / Result, where only the Result label is red.
 - **Order-type panel:** one white strip divided into three by dashed vertical perforations, display names, and a ruled Hanken label for the format.
 
 ### Inputs / Fields

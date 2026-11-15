@@ -1,6 +1,6 @@
 # 11 — Case studies
 
-How case studies ("Recent work") are shown, stored, written, and added. **Status: planned, not built yet (as of 2026-11-08).**
+How case studies ("Recent work") are shown, stored, written, and added. **Status: on hold. Case studies were taken off the site on 2026-11-15 ([decision 20](08-open-decisions.md)); `/work/` redirects to `/resources/`. The plan below still applies when they come back; the three drafts are in git history (`CASES` in `app/site_content.py`).**
 
 ## Where things stand today
 

@@ -11,7 +11,6 @@ Tools named on this site are examples, not a complete list. Most business apps c
 ## About
 - [About Ron]({{ absolute('pages.about') }}): background and way of working
 - [How it works]({{ absolute('pages.process') }}): eight stages from a free call to a documented system
-- [Recent work]({{ absolute('pages.work') }}): anonymized case studies
 - [FAQ]({{ absolute('pages.faq') }}): pricing approach, ownership, working with existing tools
 - [Book a free call]({{ absolute('pages.book') }}): a free 30-minute phone call, or email {{ contact_email }}
 {% if resources %}

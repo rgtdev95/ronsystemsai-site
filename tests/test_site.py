@@ -18,7 +18,7 @@ def client(app):
     return app.test_client()
 
 
-PAGES = ["/", "/services/", "/process/", "/work/", "/about/", "/faq/", "/book/", "/privacy/", "/terms/", "/resources/", "/videos/"]
+PAGES = ["/", "/services/", "/process/", "/about/", "/faq/", "/book/", "/privacy/", "/terms/", "/resources/", "/videos/"]
 
 
 @pytest.mark.parametrize("path", PAGES + [f"/services/{s['slug']}/" for s in C.SERVICES])
@@ -99,9 +99,21 @@ def test_sitemap_lists_services(client):
     assert "/terms/" in xml
 
 
-def test_sitemap_has_no_made_up_dates(client):
+def test_sitemap_has_no_made_up_dates(app, client):
     # Pages built from code have no real "last modified" date, so the sitemap leaves it out.
-    assert "<lastmod>" not in client.get("/sitemap.xml").get_data(as_text=True)
+    # Markdown items carry their own published/updated date; a listing takes its newest item's.
+    from app.services import content_loader
+
+    real = {}
+    with app.app_context():
+        for kind in ("resources", "videos"):
+            dates = {f"/{kind}/{i['slug']}/": i.get("updated") or i["published"] for i in content_loader.all_items(kind)}
+            if dates:
+                real.update(dates)
+                real[f"/{kind}/"] = max(dates.values())
+    xml = client.get("/sitemap.xml").get_data(as_text=True)
+    found = dict(re.findall(r"<loc>https?://[^/<]+(/[^<]*)</loc><lastmod>([^<]+)</lastmod>", xml))
+    assert found == real
 
 
 def test_missing_trailing_slash_redirects(client):
@@ -135,9 +147,15 @@ def test_icons_are_served(client, path):
 
 
 def test_empty_listings_are_noindex_in_production():
-    client = create_app("production").test_client()
-    for path in ("/resources/", "/videos/"):
-        assert client.get(path).headers.get("X-Robots-Tag") == "noindex", path
+    from app.services import content_loader
+
+    app = create_app("production")
+    client = app.test_client()
+    for kind in ("resources", "videos"):
+        with app.app_context():
+            empty = not content_loader.all_items(kind)
+        robots = client.get(f"/{kind}/").headers.get("X-Robots-Tag")
+        assert (robots == "noindex") == empty, kind
 
 
 @pytest.mark.parametrize("env", ["production", "test"])
@@ -152,6 +170,37 @@ def test_contact_redirects_to_book(client):
     resp = client.get("/contact/")
     assert resp.status_code == 301
     assert resp.headers["Location"].endswith("/book/")
+
+
+def test_work_redirects_to_articles(client):
+    resp = client.get("/work/")
+    assert resp.status_code == 301
+    assert resp.headers["Location"].endswith("/resources/")
+
+
+def test_home_lists_the_latest_articles(app, client):
+    from app.services import content_loader
+
+    with app.app_context():
+        latest = content_loader.all_items("resources")[:3]
+    html = client.get("/").get_data(as_text=True)
+    assert ("Latest articles" in html) == bool(latest)
+    for item in latest:
+        assert f'href="/resources/{item["slug"]}/"' in html
+    assert 'href="/work/"' not in html
+
+
+def test_newest_article_is_a_featured_card(app, client):
+    from app.services import content_loader
+
+    with app.app_context():
+        latest = content_loader.all_items("resources")
+    # The homepage shows each of its (up to) three articles as a card; /resources/ only the newest.
+    for path, cards in (("/", min(3, len(latest))), ("/resources/", min(1, len(latest)))):
+        html = client.get(path).get_data(as_text=True)
+        assert html.count('class="job job--featured"') == cards, path
+        for item in latest[:cards]:
+            assert item["title"] in html and f'{item["minutes"]}-minute read' in html, path
 
 
 def test_footer_shows_every_social_logo_but_links_only_set_urls(app):
@@ -195,3 +244,66 @@ def test_llms_txt(client):
 
 def test_healthz(client):
     assert client.get("/healthz").status_code == 200
+
+
+def test_article_logos_are_in_the_sprite(app):
+    from app.services import content_loader
+
+    with app.app_context():
+        sprite = app.jinja_env.loader.get_source(app.jinja_env, "partials/tool-logos.svg")[0]
+        for kind in ("resources", "videos"):
+            for item in content_loader.all_items(kind):
+                for slug in item["logos"]:
+                    assert f'id="t-{slug}"' in sprite, f"{item['slug']}: no mark t-{slug} in tool-logos.svg"
+
+
+def test_content_with_byte_order_mark_loads():
+    import pathlib
+    import tempfile
+
+    from app.services import content_loader
+
+    with tempfile.TemporaryDirectory() as tmp:
+        path = pathlib.Path(tmp) / "bom.md"
+        path.write_text("﻿---\ntitle: T\ndescription: D\npublished: 2026-01-01\n---\n:logo-n8n: n8n\n", encoding="utf-8")
+        item = content_loader._parse(str(path))
+    assert item["logos"] == ["n8n"] and 'href="#t-n8n"' in item["html"] and ":logo-" not in item["html"]
+
+
+def _write_item(path, published="2026-01-01", draft=False):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    extra = "draft: true\n" if draft else ""
+    path.write_text(f"---\ntitle: T\ndescription: D\npublished: {published}\n{extra}---\nBody\n", encoding="utf-8")
+
+
+def test_content_can_sit_in_its_own_folder():
+    import pathlib
+    import tempfile
+
+    from app.services import content_loader
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = pathlib.Path(tmp)
+        _write_item(root / "resources" / "top.md")
+        _write_item(root / "resources" / "article-1" / "older.md")
+        _write_item(root / "resources" / "article-2" / "newer.md")
+        _write_item(root / "resources" / "article-2" / "_rewrite.md")
+        _write_item(root / "resources" / "_notes" / "skipped.md")
+        _write_item(root / "resources" / "article-3" / "hidden.md", draft=True)
+        slugs = [i["slug"] for i in content_loader._load(tmp, "resources", object())]
+    # Same date: the later path comes first. The folder name isn't part of the slug.
+    assert slugs == ["top", "newer", "older"]
+
+
+def test_two_files_with_the_same_name_are_refused():
+    import pathlib
+    import tempfile
+
+    from app.services import content_loader
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = pathlib.Path(tmp)
+        _write_item(root / "resources" / "same.md")
+        _write_item(root / "resources" / "article-1" / "same.md", draft=True)
+        with pytest.raises(ValueError, match="same.md"):
+            content_loader._load(tmp, "resources", object())
