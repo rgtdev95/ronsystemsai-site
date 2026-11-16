@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Flask (Python) with server-rendered Jinja2 templates, plain HTML/CSS/JavaScript (no frontend framework, no build step), and Markdown files for content. Runs in Docker behind Caddy (reverse proxy, automatic HTTPS) on a self-managed VPS. One environment for now: the live site (`ronsystemsai.com`, deployed from `main` with one compose file and one `.env`); changes are checked locally. See docs/09-architecture-and-deployment.md and docs/10-git-workflow.md. The `docs/site-initial-design/` prototype is a design and copy reference, not production code.
+Flask (Python) with server-rendered Jinja2 templates, plain HTML/CSS/JavaScript (no frontend framework, no build step), and Markdown files for content. Runs in Docker behind Caddy (reverse proxy, automatic HTTPS) on a self-managed VPS. One environment for now: the live site (`ronsystemsai.com`, running releases tagged on `main`, with one compose file and one `.env`); changes are checked locally. See docs/09-architecture-and-deployment.md and docs/10-git-workflow.md. The `docs/site-initial-design/` prototype is a design and copy reference, not production code.
 
 ## Users
 
@@ -51,7 +51,9 @@ Visitors arrive from Google and Bing, AI assistants (ChatGPT, Perplexity, Gemini
 - Resume: `docs/about-ron/ron-resume.pdf` (private, gitignored; includes a phone number).
 - Anonymized project proof from the resume: custom CRM (leads, payments, scheduling, SMS, analytics, catalog, promo codes); Python + n8n pipelines into replicated PostgreSQL; GPT agent integrated with a project-management platform; self-hosted business stack on Proxmox/TrueNAS; OCR/RAG/local-LLM document processing.
 - Initial design prototype with drafted copy: `docs/site-initial-design/`.
-- **Absent, never fabricate:** testimonials, client names or logos, quantified results, a professional photo, a logo, and a real booking URL.
+- **Absent, never fabricate:** testimonials, client names or logos, and quantified results.
+- **Logo mark:** red and ink (`app/static/img/ron-mark.svg`), shown beside the RON wordmark in the header and used as the business logo in structured data. Facebook profile and cover images are in `docs/brand/`.
+- **Photo:** Ron's real photo, on the About page and in the Person structured data (`app/static/img/ron-profile.webp`; original in `docs/brand/`).
 
 ## Product Principles
 

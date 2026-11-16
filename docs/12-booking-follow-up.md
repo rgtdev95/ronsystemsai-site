@@ -54,8 +54,8 @@ Someone books on Proton
 
 | Piece | Where | Notes |
 |---|---|---|
-| Proton Mail Bridge | New service in `deploy/compose.yml` | Proton's IMAP/SMTP bridge. Built for desktops; on a server it runs from a community Docker image with a one-time interactive login. Needs a paid Proton plan. |
-| n8n (or a Python worker) | New service in `deploy/compose.yml` | Watches the inbox over IMAP, sends the email over SMTP, calls the AI. Keep its editor off the public internet (reach it through an SSH tunnel). |
+| Proton Mail Bridge | New service in `docker/compose.yml` | Proton's IMAP/SMTP bridge. Built for desktops; on a server it runs from a community Docker image with a one-time interactive login. Needs a paid Proton plan. |
+| n8n (or a Python worker) | New service in `docker/compose.yml` | Watches the inbox over IMAP, sends the email over SMTP, calls the AI. Keep its editor off the public internet (reach it through an SSH tunnel). |
 | AI provider | API key in `.env` | Only for the pre-call brief. |
 | Privacy page | `app/templates/pages/privacy.html` | Say that replies to booking emails are processed by an AI service to prepare for the call. Consider removing the phone number before sending text to the AI. |
 

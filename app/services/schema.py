@@ -12,6 +12,10 @@ def _abs(endpoint, **values):
     return _site() + url_for(endpoint, **values)
 
 
+def _logo():
+    return {"@type": "ImageObject", "url": _abs("static", filename="img/ron-mark.svg"), "width": 300, "height": 215}
+
+
 def _same_as():
     return [v for v in current_app.config["SOCIAL"].values() if v]
 
@@ -25,6 +29,7 @@ def person():
         "alternateName": "Ron Tactay",
         "jobTitle": "IT systems, automation and AI consultant",
         "url": _abs("pages.about"),
+        "image": _abs("static", filename="img/ron-profile.webp"),
         "worksFor": {"@id": _site() + "/#org"},
         "homeLocation": {"@type": "Place", "name": "Manila, Philippines"},
         "knowsAbout": [
@@ -51,6 +56,8 @@ def organization():
             "tech check-ups and roadmaps, workflow automation, practical AI, software selection, "
             "systems setup, custom tools and ongoing support."
         ),
+        "logo": _logo(),
+        "image": _logo()["url"],
         "founder": {"@id": _site() + "/#person"},
         "areaServed": AREA_SERVED,
         "knowsLanguage": "en",

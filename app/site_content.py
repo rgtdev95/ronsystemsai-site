@@ -7,8 +7,8 @@ no time-zone promises, no client-location claims, no invented testimonials or nu
 HERO = {
     "title": "Stop doing it by hand.",
     "lede": (
-        "I'm Ron, an engineer with 11+ years in IT. I find the manual work in your "
-        "business and build systems that do it for you."
+        "I'm Ron, an IT engineer. I help businesses find the manual work slowing them "
+        "down and build systems to take care of it."
     ),
 }
 
@@ -251,33 +251,6 @@ WAYS_TO_START = [
         "text": "Monitoring, maintenance and steady improvements after go-live, with set hours each month.",
         "format": "Monthly · cancel anytime",
         "featured": False,
-    },
-]
-
-CASES = [
-    {
-        "slug": "custom-crm",
-        "tag": "Custom tool",
-        "title": "A CRM built around one business's daily routine",
-        "problem": "Leads, payments, scheduling and customer messages lived in separate tools.",
-        "built": "A custom CRM covering lead management, payment processing, scheduling, SMS, analytics, a product catalog and promo codes.",
-        "result": "The team works from one system instead of switching between several, and reports come from live data.",
-    },
-    {
-        "slug": "data-pipelines",
-        "tag": "Automation",
-        "title": "Business data that moves by itself",
-        "problem": "Data had to be checked and copied between systems by hand.",
-        "built": "Python and n8n pipelines that validate, transform and load data into a replicated PostgreSQL database.",
-        "result": "Cleaner data, fewer manual steps, and a standby copy ready if the main database fails.",
-    },
-    {
-        "slug": "ai-agent",
-        "tag": "AI agent",
-        "title": "An AI assistant inside the project tools",
-        "problem": "Team members spent time creating, updating and searching work items by hand.",
-        "built": "A GPT-based agent connected to a project management platform, with secure sign-in, data mapping, real-time sync and plain-language commands.",
-        "result": "Work items can be created and updated by describing them in everyday language.",
     },
 ]
 
