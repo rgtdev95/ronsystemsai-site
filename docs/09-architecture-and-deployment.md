@@ -66,7 +66,7 @@ One environment for now: the live site. You develop and check changes on your ow
 | URL | `http://127.0.0.1:5000` | `ronsystemsai.com` (+ `www` → redirect) |
 | How it runs | `uv run flask --app wsgi run --debug` | `docker/compose.yml` on the VPS, running a release tagged on `main` |
 | `APP_ENV` | `development` (the default) | `production` (set in `docker/compose.yml`) |
-| Settings | `.env` in the project folder (loaded automatically) | `.env` next to `docker/compose.yml` (`/opt/apps/ronsystemsai/docker/.env`, root-only): the same file |
+| Settings | `.env` in the project folder (loaded automatically) | `.env` next to `docker/compose.yml` (`/opt/apps/website/docker/.env`, root-only): the same file |
 | Search indexing | — | Allowed, including AI crawlers |
 | Analytics (Umami) | Off | On |
 
@@ -79,13 +79,13 @@ The VPS (`ovhvps1`) runs several apps behind one shared Caddy, all set up in the
 ```
 Internet ──► VPS Caddy (caddy-ext-ovhvps1: ports 80/443, TLS)        ◄── VPS configuration repo
                ├── www.ronsystemsai.com    ──► 301 redirect to ronsystemsai.com
-               ├── ronsystemsai.com        ──► ronsystemsai-ext-ovhvps1 (gunicorn :8000, image :<version>)   ◄── this repo
+               ├── ronsystemsai.com        ──► website-ext-ovhvps1 (gunicorn :8000, image :<version>)   ◄── this repo
                ├── stats.ronsystemsai.com  ──► the VPS's shared Umami (tracker only; dashboard private)
                └── n8n, outline, ...       ──► the VPS's other apps
 ```
 
 - `docker/compose.yml` defines only the website container. It joins the VPS's `proxy` Docker network and publishes no ports; Caddy reaches it by container name.
-- The `ronsystemsai.com` block in the VPS's Caddyfile sets the security headers (HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, no `Server`), compresses, and proxies to `ronsystemsai-ext-ovhvps1:8000`. Caddy gets and renews the certificates. DNS `A` records for `@` and `www` point to the VPS, DNS only.
+- The `ronsystemsai.com` block in the VPS's Caddyfile sets the security headers (HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, no `Server`), compresses, and proxies to `website-ext-ovhvps1:8000`. Caddy gets and renews the certificates. DNS `A` records for `@` and `www` point to the VPS, DNS only.
 - Analytics: `UMAMI_SCRIPT_URL=https://stats.ronsystemsai.com/script.js` and the site's `UMAMI_WEBSITE_ID` from the VPS's Umami. The site's Content-Security-Policy allows that origin automatically.
 
 The Content-Security-Policy is set by Flask. Booking opens Proton Calendar in a new tab instead of embedding it, so no third-party booking script needs to be allowed.
@@ -107,9 +107,9 @@ GitHub holds no server keys or secrets: the workflows only use GitHub's built-in
 
 ### The server
 
-`/opt/apps/ronsystemsai` is a root-owned clone of the GitHub repo, following the VPS's `/opt/apps/<app>` convention, so `deploy.sh` and `docker compose` run with `sudo`. The repo is public, so it needs no deploy key. The settings live in `/opt/apps/ronsystemsai/docker/.env` (mode 600): your PC's `.env`, plus the `IMAGE_TAG` line `deploy.sh` maintains. First-time setup, everyday commands and what to do when something goes wrong: [13-releasing.md](13-releasing.md).
+`/opt/apps/website` is a root-owned clone of the GitHub repo, following the VPS's `/opt/apps/<app>` convention, so `deploy.sh` and `docker compose` run with `sudo`. The repo is public, so it needs no deploy key. The settings live in `/opt/apps/website/docker/.env` (mode 600): your PC's `.env`, plus the `IMAGE_TAG` line `deploy.sh` maintains. First-time setup, everyday commands and what to do when something goes wrong: [13-releasing.md](13-releasing.md).
 
-`compose.yml` fixes the Compose project name as `ronsystemsai` and the container name as `ronsystemsai-ext-ovhvps1`, the name the VPS's Caddyfile uses. The site keeps no data on the server: everything is in the image and `.env`.
+`compose.yml` fixes the Compose project name as `ronsystemsai` and the container name as `website-ext-ovhvps1`, the name the VPS's Caddyfile uses. The site keeps no data on the server: everything is in the image and `.env`.
 
 ## Security and performance baseline
 

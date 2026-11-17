@@ -99,4 +99,4 @@ The site work is done and in `dev` (PR #3). The first two articles and the move 
 - [ ] `/.well-known/security.txt` (a small touch that fits a security-minded consultant)
 - [ ] Uptime monitoring on the site itself
 - [ ] Backups: git remote for source; an off-server backup of the VPS `.env` (it holds `SECRET_KEY`)
-- [ ] Server `.env` in place at `/opt/apps/ronsystemsai/docker/.env` (root-only) before the first `sudo ./deploy.sh` (see [09-architecture-and-deployment.md](09-architecture-and-deployment.md#the-server))
+- [ ] Server `.env` in place at `/opt/apps/website/docker/.env` (root-only) before the first `sudo ./deploy.sh` (see [09-architecture-and-deployment.md](09-architecture-and-deployment.md#the-server))

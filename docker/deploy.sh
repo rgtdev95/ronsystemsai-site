@@ -1,9 +1,9 @@
 #!/bin/sh
 # Put a release on the server, or roll back to an older one. Same command either way:
-#   cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.2.0
+#   cd /opt/apps/website/docker && sudo ./deploy.sh v1.2.0
 # Versions are on the repo's GitHub Releases page.
 #
-# /opt/apps/ronsystemsai is a root-owned clone of the repo, so run it with sudo. The script checks
+# /opt/apps/website is a root-owned clone of the repo, so run it with sudo. The script checks
 # out the release's tag (so this compose.yml matches the release), records the version as
 # IMAGE_TAG in .env, starts that release's image and waits until it's healthy. The VPS's shared
 # Caddy serves it at $SITE.

@@ -5,9 +5,9 @@ How a change gets from `dev` to the live site. The branch rules are in [10-git-w
 ```text
 dev ──PR (merge commit)──► main ──git tag v1.2.0──► image on ghcr.io + GitHub release
                                                                    │
-                       on the VPS: cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.2.0
+                       on the VPS: cd /opt/apps/website/docker && sudo ./deploy.sh v1.2.0
                                                                    ▼
-                                     VPS Caddy ──► ronsystemsai-ext-ovhvps1 ──► ronsystemsai.com
+                                     VPS Caddy ──► website-ext-ovhvps1 ──► ronsystemsai.com
 ```
 
 Nothing deploys by itself. On the VPS, only the website container comes from this repo: the VPS's shared Caddy serves `ronsystemsai.com` and `www`, and the site uses the VPS's shared Umami at `stats.ronsystemsai.com` (decision 21). Both are set up in the VPS configuration repo.
@@ -81,7 +81,7 @@ Both should show the VPS's IP. This has to come before step 10: the zone's catch
 ```bash
 ssh ovhvps
 sudo docker ps --format '{{.Names}}'    # leftovers from the old deploy? (old site, Caddy or Umami containers from this repo)
-sudo git clone https://github.com/rgtdev95/ronsystemsai-site.git /opt/apps/ronsystemsai
+sudo git clone https://github.com/rgtdev95/ronsystemsai-site.git /opt/apps/website
 exit
 ```
 
@@ -91,12 +91,12 @@ Then from the project folder on your PC (PowerShell is fine), copy your `.env` a
 
 ```powershell
 scp .env ovhvps:/tmp/ronsystemsai.env
-ssh ovhvps "sudo install -m 600 -o root -g root /tmp/ronsystemsai.env /opt/apps/ronsystemsai/docker/.env && shred -u /tmp/ronsystemsai.env"
+ssh ovhvps "sudo install -m 600 -o root -g root /tmp/ronsystemsai.env /opt/apps/website/docker/.env && shred -u /tmp/ronsystemsai.env"
 ```
 
 ### 10. Route the domain to the site in the VPS's Caddy
 
-In the VPS configuration repo, the Caddyfile's main-domain block sends `ronsystemsai.com` to `ronsystemsai-ext-ovhvps1:8000` with the security headers, and `www` redirects to it. Push that repo, then on the VPS follow its Caddy readme ("Change the Caddyfile"):
+In the VPS configuration repo, the Caddyfile's main-domain block sends `ronsystemsai.com` to `website-ext-ovhvps1:8000` with the security headers, and `www` redirects to it. Push that repo, then on the VPS follow its Caddy readme ("Change the Caddyfile"):
 
 ```bash
 git -C ~/ovh-vps-homelab pull
@@ -111,7 +111,7 @@ If Caddy tried these names before the DNS records existed, it may be waiting out
 
 ```bash
 ssh ovhvps
-cd /opt/apps/ronsystemsai/docker
+cd /opt/apps/website/docker
 sudo grep -c -E '^(SECRET_KEY|UMAMI_WEBSITE_ID)=.' .env   # prints 2 when both have values (without showing them)
 sudo ./deploy.sh v1.0.0
 ```
@@ -139,7 +139,7 @@ The script ends with `==> Live: v1.0.0 at https://ronsystemsai.com`.
 4. **Deploy** on the VPS:
 
    ```bash
-   cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.2.0
+   cd /opt/apps/website/docker && sudo ./deploy.sh v1.2.0
    ```
 
 5. **Check** https://ronsystemsai.com.
@@ -187,7 +187,7 @@ Then the release: GitHub → the repo → **Releases → Draft a new release** �
 **Deploy** on the VPS (the same command with an older version rolls back):
 
 ```
-cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.0.0
+cd /opt/apps/website/docker && sudo ./deploy.sh v1.0.0
 ```
 ````
 
@@ -207,7 +207,7 @@ For an urgent fix that can't wait for what's in `dev`:
 Run the deploy command with the previous version:
 
 ```bash
-cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.1.0
+cd /opt/apps/website/docker && sudo ./deploy.sh v1.1.0
 ```
 
 That puts back that release's image and `compose.yml`. Then fix the problem on a branch and release a new version as usual. Don't delete or move the bad tag.
@@ -226,7 +226,7 @@ That puts back that release's image and `compose.yml`. Then fix the problem on a
 
 ## On the server
 
-Run these in `/opt/apps/ronsystemsai/docker`. The folder is root-owned, so everything takes `sudo`.
+Run these in `/opt/apps/website/docker`. The folder is root-owned, so everything takes `sudo`.
 
 | To | Run |
 |---|---|

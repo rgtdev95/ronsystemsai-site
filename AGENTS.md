@@ -48,7 +48,7 @@ The owner wants **one of everything**: one `.env`, one compose file (`docker/com
 
 ## Settings
 
-- One `.env`, the same file on the PC and the server (`/opt/apps/ronsystemsai/docker/.env`, root-only). Never commit it.
+- One `.env`, the same file on the PC and the server (`/opt/apps/website/docker/.env`, root-only). Never commit it.
 - Never put `APP_ENV` or `SITE_URL` in `.env`. The PC defaults to development; `docker/compose.yml` sets production, and `SITE_URL` follows from `APP_ENV`.
 - Keep comments on their own lines in `.env` files. Docker Compose reads `KEY=   # note` as the value.
 

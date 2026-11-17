@@ -4,8 +4,8 @@
 # set up in the VPS configuration repo (Caddyfile and docker-apps/external/ronsystemsai).
 # Settings come from `.env` next to this file: the same file as the project's .env.
 #
-# /opt/apps/ronsystemsai on the server is a root-owned clone of the repo. Deploy or roll back with:
-#   cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.2.0
+# /opt/apps/website on the server is a root-owned clone of the repo. Deploy or roll back with:
+#   cd /opt/apps/website/docker && sudo ./deploy.sh v1.2.0
 # The release's version is kept in .env (IMAGE_TAG), so plain `sudo docker compose ...` commands
 # keep running that same version.
 
@@ -15,8 +15,9 @@ name: ronsystemsai
 services:
   web:
     image: ${IMAGE:-ghcr.io/rgtdev95/ronsystemsai-site}:${IMAGE_TAG:-latest}
-    # Named after the VPS convention (<app>-<scope>-<server>); the Caddyfile uses this name.
-    container_name: ronsystemsai-ext-ovhvps1
+    # Named after the VPS convention (<app>-<scope>-<server>), with no domain in it: the VPS repo keeps
+    # the real domain out of its committed files, and its Caddyfile uses this name.
+    container_name: website-ext-ovhvps1
     restart: unless-stopped
     env_file: .env
     environment:
