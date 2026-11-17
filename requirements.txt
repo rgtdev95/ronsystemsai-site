@@ -1,4 +1,14 @@
+# The one dependency list: the website, plus the tools used to develop and test it.
+# Install on your PC with: uv pip install -r requirements.txt
+
+# Website
 Flask==3.1.2
 Markdown==3.9
 PyYAML==6.0.3
 gunicorn==23.0.0
+
+# Development and tests. They also end up in the Docker image (a few MB), where nothing runs them.
+pytest==8.4.2
+ruff==0.13.2
+# Lets `flask run` load .env automatically on your PC; on the server, compose passes .env instead.
+python-dotenv==1.2.4

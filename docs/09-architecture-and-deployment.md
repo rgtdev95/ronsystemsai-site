@@ -25,8 +25,8 @@ personal-site/
 │   ├── __init__.py            # create_app() factory, loads config by APP_ENV
 │   ├── config.py              # BaseConfig / TestConfig / ProductionConfig
 │   ├── routes/
-│   │   ├── pages.py           # home, services, work, process, about, faq, book, legal (/contact/ redirects to /book/)
-│   │   ├── content.py         # /resources/<slug>, /videos/<slug>, /work/<slug>
+│   │   ├── pages.py           # home, services, process, about, faq, book, legal (/contact/ → /book/, /work/ → /resources/)
+│   │   ├── content.py         # /resources/<slug>, /videos/<slug>
 │   │   └── seo.py             # sitemap.xml, robots.txt, llms.txt, security.txt
 │   ├── services/
 │   │   ├── content_loader.py  # reads Markdown + front-matter, caches
@@ -41,17 +41,17 @@ personal-site/
 │       ├── img/
 │       └── fonts/             # self-hosted fonts (faster, no third-party requests)
 ├── content/
-│   ├── resources/*.md
-│   ├── videos/*.md
-│   └── work/*.md
+│   ├── resources/         # <slug>.md, or <folder>/<slug>.md with its drafts (_*.md, not published)
+│   └── videos/
 ├── tests/                     # pytest: routes return 200, sitemap valid, noindex on test, etc.
-├── deploy/
-│   ├── Caddyfile
-│   └── compose.yml            # the one compose file: Caddy + website + Umami
-├── Dockerfile
+├── docker/                    # everything Docker
+│   ├── Dockerfile             # the website image (build from the project root: docker build -f docker/Dockerfile .)
+│   ├── Dockerfile.dockerignore  # what stays out of the image
+│   ├── compose.yml            # the one compose file: the website container (the VPS's Caddy and Umami do the rest)
+│   └── deploy.sh              # run on the server: sudo ./deploy.sh v1.2.0
 ├── requirements.txt
 ├── .env.example               # the one settings file (copy to .env), no secrets
-├── .github/workflows/         # CI + deploy (see below)
+├── .github/workflows/         # ci.yml (checks) + release.yml (see below)
 ├── docs/                      # planning (this folder)
 │   ├── about-ron/             # private resume, gitignored
 │   └── site-initial-design/   # design reference
@@ -64,78 +64,56 @@ One environment for now: the live site. You develop and check changes on your ow
 | | **Your PC** | **Live** |
 |---|---|---|
 | URL | `http://127.0.0.1:5000` | `ronsystemsai.com` (+ `www` → redirect) |
-| How it runs | `uv run flask --app wsgi run --debug` | `deploy/compose.yml` on the VPS, deployed from `main` |
-| `APP_ENV` | `development` (the default) | `production` (set in `deploy/compose.yml`) |
-| Settings | `.env` in the project folder (loaded automatically) | `.env` next to `deploy/compose.yml`: the same file, plus the Umami database values |
+| How it runs | `uv run flask --app wsgi run --debug` | `docker/compose.yml` on the VPS, running a release tagged on `main` |
+| `APP_ENV` | `development` (the default) | `production` (set in `docker/compose.yml`) |
+| Settings | `.env` in the project folder (loaded automatically) | `.env` next to `docker/compose.yml` (`/opt/apps/website/docker/.env`, root-only): the same file |
 | Search indexing | — | Allowed, including AI crawlers |
 | Analytics (Umami) | Off | On |
 
 `APP_ENV` decides the site's address too (`SITE_URL`), so it never goes in `.env`. The code still supports `APP_ENV=test` (`test.ronsystemsai.com`, noindex) in case a test site comes back.
 
-## How the containers run on the VPS
+## How the site runs on the VPS
+
+The VPS (`ovhvps1`) runs several apps behind one shared Caddy, all set up in the VPS configuration repo. This repo adds one container to it (decision 21).
 
 ```
-Internet ──► Caddy (ports 80/443, TLS)
+Internet ──► VPS Caddy (caddy-ext-ovhvps1: ports 80/443, TLS)        ◄── VPS configuration repo
                ├── www.ronsystemsai.com    ──► 301 redirect to ronsystemsai.com
-               ├── ronsystemsai.com        ──► web       (gunicorn :8000, image :<sha>)
-               └── stats.ronsystemsai.com  ──► umami     (:3000) + umami-db (PostgreSQL, internal only)
+               ├── ronsystemsai.com        ──► website-ext-ovhvps1 (gunicorn :8000, image :<version>)   ◄── this repo
+               ├── stats.ronsystemsai.com  ──► the VPS's shared Umami (tracker only; dashboard private)
+               └── n8n, outline, ...       ──► the VPS's other apps
 ```
 
-- All four containers are defined in one file, `deploy/compose.yml`. Caddy owns ports 80/443 and is the only container exposed to the internet; the others publish no ports on the host.
-- Certificates: Caddy gets and renews Let's Encrypt certificates automatically. Keep its `/data` volume so certificates survive restarts. DNS A records for `@`, `www`, and `stats` point to the VPS.
-
-### Caddyfile outline
-
-```caddyfile
-{
-	email contactme@ronsystemsai.com
-}
-
-(security_headers) {
-	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		X-Content-Type-Options "nosniff"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-		-Server
-	}
-}
-
-www.ronsystemsai.com {
-	redir https://ronsystemsai.com{uri} permanent
-}
-
-ronsystemsai.com {
-	import security_headers
-	encode zstd gzip
-	reverse_proxy web:8000
-}
-
-stats.ronsystemsai.com {
-	import security_headers
-	encode zstd gzip
-	reverse_proxy umami:3000
-}
-```
+- `docker/compose.yml` defines only the website container. It joins the VPS's `proxy` Docker network and publishes no ports; Caddy reaches it by container name.
+- The `ronsystemsai.com` block in the VPS's Caddyfile sets the security headers (HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, no `Server`), compresses, and proxies to `website-ext-ovhvps1:8000`. Caddy gets and renews the certificates. DNS `A` records for `@` and `www` point to the VPS, DNS only.
+- Analytics: `UMAMI_SCRIPT_URL=https://stats.ronsystemsai.com/script.js` and the site's `UMAMI_WEBSITE_ID` from the VPS's Umami. The site's Content-Security-Policy allows that origin automatically.
 
 The Content-Security-Policy is set by Flask. Booking opens Proton Calendar in a new tab instead of embedding it, so no third-party booking script needs to be allowed.
-- Secrets (`SECRET_KEY`, Umami's database password and app secret) live in `.env`, on your PC and on the VPS, never in git.
-- Containers run as a non-root user, with `restart: unless-stopped` and a `/healthz` endpoint for health checks.
+- Secrets (`SECRET_KEY`, `INDEXNOW_KEY`) live in `.env`, on your PC and on the VPS, never in git.
+- The container runs as a non-root user with a read-only filesystem, `restart: unless-stopped` and a `/healthz` endpoint for health checks.
 
-## CI/CD (GitHub Actions)
+## Releases and deploys
 
-| Trigger | Steps |
+Nothing deploys by itself. GitHub builds each release, and you put it on the server by hand (decision 18 in [08-open-decisions.md](08-open-decisions.md)). The branch flow is in [10-git-workflow.md](10-git-workflow.md), and the step-by-step runbook in [13-releasing.md](13-releasing.md).
+
+| When | What happens |
 |---|---|
-| Pull request to `develop` or `main` | Lint (ruff) → tests (pytest) → build the Docker image (no deploy) |
-| Push/merge to `develop` | Nothing. `develop` collects finished work until a release PR into `main` |
-| Push/merge to `main` | Tests → build → push to GitHub Container Registry (GHCR) as `<sha>` and `latest` → SSH to VPS → `docker compose pull web && docker compose up -d --remove-orphans` → submit the sitemap's pages to IndexNow (if `INDEXNOW_KEY` is set in `.env`) |
-| Rollback | On the VPS: `cd ~/ronsystemsai/deploy && IMAGE_TAG=<previous sha> docker compose up -d web` |
+| A pull request into `dev` or `main` | **CI**: lint → tests → compose file check → build the image → start it and load key pages. Nothing is published. **Paused for now** (decision 19 in [08-open-decisions.md](08-open-decisions.md)) |
+| You push a tag like `v1.2.0` on `main` | **Release**: the same checks → image pushed to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → GitHub release with the merged PRs and the deploy command. **Blocked for now** (decision 19): you build, push and publish by hand ([13-releasing.md](13-releasing.md#build-and-publish-a-release-by-hand)) |
+| You run `sudo ./deploy.sh v1.2.0` on the server | Checks out that tag, so `compose.yml` matches the release → records `IMAGE_TAG=v1.2.0` in `.env` → pulls the image and restarts the site, waiting until it's healthy (a few seconds of downtime) → checks `https://ronsystemsai.com/healthz` → asks search engines to recrawl through IndexNow, if `INDEXNOW_KEY` is set |
+| Rollback | The same command with an older version: `sudo ./deploy.sh v1.1.0` |
 
-The GitHub repo holds a deploy SSH key and the VPS host as **repository secrets**. The deploy user on the VPS can only run Docker Compose in the site directory.
+GitHub holds no server keys or secrets: the workflows only use GitHub's built-in token, and nothing in GitHub can reach the VPS.
+
+### The server
+
+`/opt/apps/website` is a root-owned clone of the GitHub repo, following the VPS's `/opt/apps/<app>` convention, so `deploy.sh` and `docker compose` run with `sudo`. The repo is public, so it needs no deploy key. The settings live in `/opt/apps/website/docker/.env` (mode 600): your PC's `.env`, plus the `IMAGE_TAG` line `deploy.sh` maintains. First-time setup, everyday commands and what to do when something goes wrong: [13-releasing.md](13-releasing.md).
+
+`compose.yml` fixes the Compose project name as `ronsystemsai` and the container name as `website-ext-ovhvps1`, the name the VPS's Caddyfile uses. The site keeps no data on the server: everything is in the image and `.env`.
 
 ## Security and performance baseline
 
-- Security headers: HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy (set in Caddy); Content-Security-Policy (set per page in Flask)
+- Security headers: HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy (set in the VPS's Caddy); Content-Security-Policy (set per page in Flask)
 - No forms and no cookies, so there's nothing to protect with CSRF tokens or rate limiting. A test checks that no page sets a cookie
 - `/.well-known/security.txt`
 - Gzip/zstd compression and long cache headers for static files (cache-busting via file hash in the URL)

@@ -1,6 +1,9 @@
 # Private source material (resume includes personal contact details)
 docs/about-ron/
 
+# Article drafts and notes: files starting with _ (the site skips them too)
+/content/**/_*.md
+
 # Secrets
 .env
 .env.*

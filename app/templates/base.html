@@ -20,8 +20,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 
-<link rel="icon" href="/favicon.ico" sizes="48x48">
-<link rel="icon" href="{{ asset('img/favicon.svg') }}" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="{{ url_for('static', filename='fonts/big-shoulders-display.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ url_for('static', filename='fonts/hanken-grotesk.woff2') }}" as="font" type="font/woff2" crossorigin>
@@ -40,6 +39,7 @@
 <header class="masthead">
   <div class="masthead__inner">
     <a class="wordmark" href="{{ url_for('pages.home') }}" aria-label="{{ site_name }}, home">
+      <img class="wordmark__symbol" src="{{ asset('img/ron-mark.svg') }}" alt="" width="300" height="215">
       <span class="wordmark__ron">Ron</span><span class="wordmark__rest">Systems&nbsp;AI</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
@@ -49,7 +49,7 @@
       {% set here = request.endpoint %}
       <a href="{{ url_for('pages.services') }}" {% if here in ('pages.services','pages.service') %}aria-current="page"{% endif %}>Services</a>
       <a href="{{ url_for('pages.process') }}" {% if here == 'pages.process' %}aria-current="page"{% endif %}>How it works</a>
-      <a href="{{ url_for('pages.work') }}" {% if here == 'pages.work' %}aria-current="page"{% endif %}>Work</a>
+      <a href="{{ url_for('content.resources') }}" {% if here in ('content.resources','content.resource') %}aria-current="page"{% endif %}>Articles</a>
       <a href="{{ url_for('pages.about') }}" {% if here == 'pages.about' %}aria-current="page"{% endif %}>About</a>
       <a href="{{ url_for('pages.faq') }}" {% if here == 'pages.faq' %}aria-current="page"{% endif %}>FAQ</a>
       <a class="stub stub--small" href="{{ url_for('pages.book') }}" data-umami-event="book-click-nav"><span class="stub__label">Book a call</span></a>
@@ -91,7 +91,7 @@
       <p class="footer__head">Ron Systems AI</p>
       <ul>
         <li><a href="{{ url_for('pages.process') }}">How it works</a></li>
-        <li><a href="{{ url_for('pages.work') }}">Work</a></li>
+        <li><a href="{{ url_for('content.resources') }}">Articles</a></li>
         <li><a href="{{ url_for('pages.about') }}">About</a></li>
         <li><a href="{{ url_for('pages.privacy') }}">Privacy</a></li>
         <li><a href="{{ url_for('pages.terms') }}">Terms</a></li>

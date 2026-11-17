@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "partials/macros.html" import icon, stub, book_close with context %}
+{% from "partials/macros.html" import icon, stub, book_close, content_list with context %}
 {% block title %}Ron Systems AI: stop running your business on manual work{% endblock %}
 {% block body_class %}page-home{% endblock %}
 {% block main %}
@@ -126,29 +126,17 @@
   </div>
 </section>
 
-<section class="work" aria-labelledby="work-title">
+{% if articles %}
+<section class="latest" aria-labelledby="latest-title">
   <div class="wrap">
-    <div class="work__head">
-      <h2 id="work-title" class="display display--l">Recent work</h2>
-      <p>Client details are kept private. These are the problems and what was built.</p>
+    <div class="latest__head">
+      <h2 id="latest-title" class="display display--l">Latest articles</h2>
+      <p>Plain-English guides on automation, AI and business systems. <a class="link" href="{{ url_for('content.resources') }}">All articles {{ icon('arrow') }}</a></p>
     </div>
-    <div class="jobs">
-      {% for c in C.CASES %}
-      <article class="job" id="{{ c.slug }}">
-        <header class="job__side">
-          <h3 class="job__title">{{ c.title }}</h3>
-          <span class="job__tag">{{ c.tag }}</span>
-        </header>
-        <dl class="job__body">
-          <div><dt>Problem</dt><dd>{{ c.problem }}</dd></div>
-          <div><dt>What I built</dt><dd>{{ c.built }}</dd></div>
-          <div class="job__result"><dt>Result</dt><dd>{{ c.result }}</dd></div>
-        </dl>
-      </article>
-      {% endfor %}
-    </div>
+    {{ content_list(articles, "resources", "h3", cards=3) }}
   </div>
 </section>
+{% endif %}
 
 <section class="why" aria-labelledby="why-title">
   <div class="wrap why__grid">

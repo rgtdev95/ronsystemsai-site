@@ -4,6 +4,7 @@
 {% block description %}{{ item.description }}{% endblock %}
 {% block og_type %}article{% endblock %}
 {% block main %}
+{% if item.logos %}{% include "partials/tool-logos.svg" %}{% endif %}
 {% call page_head(item.title, item.description, (meta.title, url_for(meta.list))) %}
 <p class="byline">By Rolando “Ron” Tactay · <time datetime="{{ item.published }}">{{ item.published }}</time>{% if item.updated and item.updated != item.published %} · Updated <time datetime="{{ item.updated }}">{{ item.updated }}</time>{% endif %}</p>
 {% endcall %}
@@ -12,7 +13,7 @@
     {% if item.youtube_id %}
     <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/{{ item.youtube_id }}" title="{{ item.title }}" loading="lazy" allowfullscreen></iframe>
     {% endif %}
-    <div class="prose">{{ item.html | safe }}</div>
+    <div class="prose prose--article">{{ item.html | safe }}</div>
   </div>
 </section>
 {{ book_close(C) }}

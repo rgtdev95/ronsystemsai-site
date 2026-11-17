@@ -52,3 +52,45 @@
   </div>
 </header>
 {%- endmacro %}
+
+{# Articles or videos, newest first. The first `cards` items are filed jobs (title and date on the ink side, then
+   In short / What's inside / Read it); the rest are plain list rows. h = the heading level under the page's own
+   headings. The homepage shows every item as a card; list pages show the newest one. #}
+{% macro content_list(items, kind, h="h2", cards=1) -%}
+{% set endpoint = "content.video" if kind == "videos" else "content.resource" %}
+<div class="content-list">
+  <div class="jobs">
+    {% for i in items[:cards] %}
+    {% set url = url_for(endpoint, slug=i.slug) %}
+    <article class="job job--featured">
+      <header class="job__side">
+        <{{ h }} class="job__title"><a href="{{ url }}">{{ i.title }}</a></{{ h }}>
+        <span class="job__tag">{{ "Video" if kind == "videos" else "Article" }} · <time datetime="{{ i.published }}">{{ i.published }}</time></span>
+      </header>
+      <dl class="job__body{% if not i.headings %} job__body--two{% endif %}">
+        <div><dt>In short</dt><dd>{{ i.description }}</dd></div>
+        {% if i.headings %}
+        <div><dt>What's inside</dt><dd><ul>{% for q in i.headings[:3] %}<li>{{ q }}</li>{% endfor %}</ul></dd></div>
+        {% endif %}
+        {% if kind == "videos" %}
+        <div><dt>Watch it</dt><dd><a class="link" href="{{ url }}">Watch the video {{ icon('arrow') }}</a></dd></div>
+        {% else %}
+        <div><dt>Read it</dt><dd>{{ i.minutes }}-minute read<br><a class="link" href="{{ url }}">Read the article {{ icon('arrow') }}</a></dd></div>
+        {% endif %}
+      </dl>
+    </article>
+    {% endfor %}
+  </div>
+  {% if items | length > cards %}
+  <ul class="list-items">
+    {% for i in items[cards:] %}
+    <li><a href="{{ url_for(endpoint, slug=i.slug) }}">
+      <{{ h }}>{{ i.title }}</{{ h }}>
+      <p>{{ i.description }}</p>
+      <time datetime="{{ i.published }}">{{ i.published }}</time>
+    </a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{%- endmacro %}
