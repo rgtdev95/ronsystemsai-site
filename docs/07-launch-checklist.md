@@ -2,11 +2,11 @@
 
 ## Next session: what's waiting (as of 2026-11-11)
 
-The site work is done. It sits on the branch `feature/launch-prep`, uncommitted. Deploys are now manual: a version tag on `main` builds the release, and `docker/deploy.sh` puts it on the server (decision 18). These are the open items, roughly in order.
+The site work is done and in `dev` (PR #3). The first two articles and the move onto the VPS's shared Caddy and Umami (decision 21) are on `feature/release-v1`. Deploys are manual: a version tag on `main`, an image built and pushed by hand while GitHub Actions is blocked, and `sudo ./deploy.sh` on the VPS (decision 18). These are the open items, roughly in order.
 
 ### First: branches, the first release and the server
 
-- [ ] **Tidy the branches and push the work** (on your PC, from the project folder):
+- [x] **Tidy the branches and push the work** (done by 2026-11-17: stray branches gone, `main` matches GitHub, the work merged into `dev`):
 
   ```bash
   git branch -f main origin/main                  # local main back to GitHub's version
@@ -19,7 +19,7 @@ The site work is done. It sits on the branch `feature/launch-prep`, uncommitted.
   ```
 
 - [ ] **Clear the GitHub billing lock.** No GitHub Actions job can run until it's cleared: CI is paused and the Release workflow is blocked (decision 19). Check GitHub → Settings → Billing and licensing; if nothing is owed there, contact GitHub Support. Then uncomment the `pull_request` trigger in `.github/workflows/ci.yml` and add the `checks` status to the ruleset
-- [ ] **First release and server setup:** follow [13-releasing.md](13-releasing.md), "First release (one time)", steps 1–12. The `ec8754a` push to `main` on 2026-11-08 ran the old auto-deploy, which most likely failed at the server step. The old containers kept running, so there's nothing to fix there
+- [ ] **First release and server setup:** follow [13-releasing.md](13-releasing.md), "First release (one time)", steps 1–12. Step 9 checks the VPS for leftovers from the old auto-deploy (the `ec8754a` push to `main` on 2026-11-08 most likely failed at the server step)
 
 ### Proton
 
@@ -37,7 +37,7 @@ The site work is done. It sits on the branch `feature/launch-prep`, uncommitted.
 ### Settings in `.env`
 
 - [ ] `INDEXNOW_KEY` (optional): generate with `python -c "import secrets; print(secrets.token_hex(16))"`. The site serves it and each deploy then submits all pages to Bing and others
-- [ ] `UMAMI_WEBSITE_ID`: visitor stats don't record until it's set (after setting up Umami at `stats.ronsystemsai.com`)
+- [ ] `UMAMI_WEBSITE_ID`: visitor stats don't record until it's set. Add the website in the VPS's shared Umami first ([13-releasing.md](13-releasing.md), step 7)
 
 ### After launch (needs the live site)
 
@@ -98,5 +98,5 @@ The site work is done. It sits on the branch `feature/launch-prep`, uncommitted.
 - [ ] Security headers (CSP, HSTS). Your security background makes it worth getting an A on securityheaders.com
 - [ ] `/.well-known/security.txt` (a small touch that fits a security-minded consultant)
 - [ ] Uptime monitoring on the site itself
-- [ ] Backups: git remote for source; an off-server backup of the VPS `.env` (it holds the Umami database password)
-- [ ] Server `.env` in place at `~/ronsystemsai/docker/.env` before the first `./deploy.sh` (see [09-architecture-and-deployment.md](09-architecture-and-deployment.md#the-server))
+- [ ] Backups: git remote for source; an off-server backup of the VPS `.env` (it holds `SECRET_KEY`)
+- [ ] Server `.env` in place at `/opt/apps/ronsystemsai/docker/.env` (root-only) before the first `sudo ./deploy.sh` (see [09-architecture-and-deployment.md](09-architecture-and-deployment.md#the-server))

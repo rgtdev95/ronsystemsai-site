@@ -1,11 +1,12 @@
 #!/bin/sh
 # Put a release on the server, or roll back to an older one. Same command either way:
-#   cd ~/ronsystemsai/docker && ./deploy.sh v1.2.0
+#   cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.2.0
 # Versions are on the repo's GitHub Releases page.
 #
-# ~/ronsystemsai is a clone of the repo. The script checks out the release's tag (so this
-# compose.yml and Caddyfile match the release), records the version as IMAGE_TAG in .env,
-# starts that release's image and waits until it's healthy.
+# /opt/apps/ronsystemsai is a root-owned clone of the repo, so run it with sudo. The script checks
+# out the release's tag (so this compose.yml matches the release), records the version as
+# IMAGE_TAG in .env, starts that release's image and waits until it's healthy. The VPS's shared
+# Caddy serves it at $SITE.
 set -eu
 
 SITE=https://ronsystemsai.com
@@ -40,7 +41,7 @@ main() {
   docker image prune -f > /dev/null
 
   if ! curl -fsS -o /dev/null --retry 10 --retry-delay 3 --retry-all-errors "$SITE/healthz"; then
-    echo "The containers are up, but $SITE/healthz isn't answering. Check: docker compose logs caddy web" >&2
+    echo "The containers are up, but $SITE/healthz isn't answering. Check: sudo docker compose logs web, and sudo docker logs caddy-ext-ovhvps1" >&2
     exit 1
   fi
   echo "==> Live: $version at $SITE"

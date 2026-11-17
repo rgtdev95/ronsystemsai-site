@@ -67,7 +67,7 @@ jobs:
             echo "**Deploy** on the server (the same command with an older version rolls back):"
             echo
             echo '```'
-            echo "cd ~/ronsystemsai/docker && ./deploy.sh $VERSION"
+            echo "cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh $VERSION"
             echo '```'
             echo
           } > notes.md

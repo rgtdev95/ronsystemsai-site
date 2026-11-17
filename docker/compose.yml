@@ -1,64 +1,31 @@
-# Everything that runs on the VPS: Caddy (HTTPS), the website, and Umami (analytics).
-# Settings come from `.env` next to this file: the same file as the project's .env,
-# plus the server-only values listed at the end of .env.example.
+# The website on the VPS. Only this container lives here: the VPS's shared Caddy serves
+# ronsystemsai.com and www and reaches it by container name over the shared `proxy` network, and
+# the site's analytics use the VPS's shared Umami at stats.ronsystemsai.com (decision 21). Both are
+# set up in the VPS configuration repo (Caddyfile and docker-apps/external/ronsystemsai).
+# Settings come from `.env` next to this file: the same file as the project's .env.
 #
-# ~/ronsystemsai on the server is a clone of the repo. Deploy or roll back a release with:
-#   cd ~/ronsystemsai/docker && ./deploy.sh v1.2.0
-# The release's version is kept in .env (IMAGE_TAG), so plain `docker compose ...` commands
+# /opt/apps/ronsystemsai on the server is a root-owned clone of the repo. Deploy or roll back with:
+#   cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.2.0
+# The release's version is kept in .env (IMAGE_TAG), so plain `sudo docker compose ...` commands
 # keep running that same version.
 
-# Fixed name, so container and volume names don't depend on the folder this file sits in.
+# Fixed name, so the project's name doesn't depend on the folder this file sits in.
 name: ronsystemsai
 
 services:
-  caddy:
-    image: caddy:2
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    networks: [web]
-
   web:
     image: ${IMAGE:-ghcr.io/rgtdev95/ronsystemsai-site}:${IMAGE_TAG:-latest}
+    # Named after the VPS convention (<app>-<scope>-<server>); the Caddyfile uses this name.
+    container_name: ronsystemsai-ext-ovhvps1
     restart: unless-stopped
     env_file: .env
     environment:
       APP_ENV: production   # also sets SITE_URL=https://ronsystemsai.com and turns on Umami
     read_only: true
     tmpfs: [/tmp]
-    networks: [web]
-
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    restart: unless-stopped
-    environment:
-      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
-      APP_SECRET: ${UMAMI_APP_SECRET}
-    depends_on: [umami-db]
-    networks: [web, umami]
-
-  umami-db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: umami
-      POSTGRES_USER: umami
-      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
-    volumes:
-      - umami_db:/var/lib/postgresql/data
-    networks: [umami]
-
-volumes:
-  caddy_data:
-  caddy_config:
-  umami_db:
+    networks: [proxy]
 
 networks:
-  web:
-  umami:
+  # Created by the VPS's Caddy. Start Caddy first.
+  proxy:
+    external: true

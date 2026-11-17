@@ -36,9 +36,9 @@ docker build -f docker/Dockerfile .       # from the project root
 | Templates | `app/templates/` (`base.html`, `pages/`, `partials/macros.html`, `seo/`) |
 | Styles and scripts | `app/static/css/site.css` (tokens at the top), `app/static/js/` |
 | Images | `app/static/img/`; originals and other brand files in `docs/brand/` (not shipped) |
-| Articles and videos | `content/resources/*.md`, `content/videos/*.md` (see `content/README.md`) |
+| Articles and videos | `content/resources/`, `content/videos/`: one `.md` per item, optionally in its own folder; `_*.md` drafts aren't published or committed (see `content/README.md`) |
 | Settings | `.env`, documented in `.env.example`; read in `app/config.py` |
-| Docker, Caddy, compose, the server's deploy script | `docker/` (`deploy.sh` runs on the server) |
+| Docker, compose, the server's deploy script | `docker/` (`deploy.sh` runs on the server). Caddy and Umami are the VPS's shared ones, set up in the VPS configuration repo (decision 21) |
 | CI and releases | `.github/workflows/ci.yml` (checks on every PR; paused, decision 19), `release.yml` (on a version tag) |
 | Tests | `tests/test_site.py` |
 
@@ -48,7 +48,7 @@ The owner wants **one of everything**: one `.env`, one compose file (`docker/com
 
 ## Settings
 
-- One `.env`, the same file on the PC and the server (`~/ronsystemsai/docker/.env`). Never commit it.
+- One `.env`, the same file on the PC and the server (`/opt/apps/ronsystemsai/docker/.env`, root-only). Never commit it.
 - Never put `APP_ENV` or `SITE_URL` in `.env`. The PC defaults to development; `docker/compose.yml` sets production, and `SITE_URL` follows from `APP_ENV`.
 - Keep comments on their own lines in `.env` files. Docker Compose reads `KEY=   # note` as the value.
 

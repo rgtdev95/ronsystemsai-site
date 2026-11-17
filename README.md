@@ -12,7 +12,7 @@ personal-site/
 ├── .gitignore                    ← keeps the resume, secrets, and Python caches out of git
 ├── app/                          ← Flask app (routes, templates, static, content data)
 ├── content/                      ← Markdown articles and videos
-├── docker/                       ← Dockerfile, compose.yml (the one compose file), Caddyfile, deploy.sh
+├── docker/                       ← Dockerfile, compose.yml (the one compose file: the website container), deploy.sh
 ├── tests/                        ← pytest
 └── docs/                         ← planning: what the site is for and how it will work
     ├── 01-purpose-and-positioning.md
@@ -40,7 +40,7 @@ One live site, ronsystemsai.com, running releases tagged on `main`. There's no t
 
 ## Settings: one `.env` file
 
-Copy `.env.example` to `.env` and fill it in. The same file goes to the server at `~/ronsystemsai/docker/.env`, plus the two Umami database values. Don't put `APP_ENV` or `SITE_URL` in it: your PC is always development and the server is always production.
+Copy `.env.example` to `.env` and fill it in. Don't put `APP_ENV` or `SITE_URL` in it: your PC is always development and the server is always production. The same file goes to the server at `/opt/apps/ronsystemsai/docker/.env` (root-only). On the VPS the site runs behind the VPS's shared Caddy and uses its Umami ([decision 21](docs/08-open-decisions.md)); releasing and deploying: [docs/13-releasing.md](docs/13-releasing.md).
 
 ## Run it locally
 
@@ -56,7 +56,7 @@ uv run ruff check app tests wsgi.py          # lint
 
 ## Branches, releases and deploys
 
-Work goes from short-lived branches into `dev`, and from `dev` into `main`. CI checks every pull request (paused for now: [decision 19](docs/08-open-decisions.md)). To release, tag `main` (`git tag v1.2.0 && git push origin v1.2.0`). GitHub then builds the image and publishes the release. Deploy it on the server with `cd ~/ronsystemsai/docker && ./deploy.sh v1.2.0`. Step by step: [docs/13-releasing.md](docs/13-releasing.md).
+Work goes from short-lived branches into `dev`, and from `dev` into `main`. CI checks every pull request (paused for now: [decision 19](docs/08-open-decisions.md)). To release, tag `main` (`git tag v1.2.0 && git push origin v1.2.0`). GitHub then builds the image and publishes the release (by hand while Actions is blocked). Deploy it on the VPS with `cd /opt/apps/ronsystemsai/docker && sudo ./deploy.sh v1.2.0`. Step by step: [docs/13-releasing.md](docs/13-releasing.md).
 
 Everything on the server is in one file, [docker/compose.yml](docker/compose.yml): Caddy, the website and Umami.
 

@@ -6,7 +6,7 @@ A simple git flow with two long-lived branches, `main` and `dev`. Nothing deploy
 feature/*  ┐
 fix/*      ├─PR─►  dev  ──PR──►  main  ──tag v1.2.0──►  GitHub release + image
 content/*  ┘       (CI)          (CI)                         │
-                                  ▲                            ▼  ./deploy.sh v1.2.0 (by hand)
+                                  ▲                            ▼  sudo ./deploy.sh v1.2.0 (by hand)
 hotfix/*  ──PR─────────────────────┘                     ronsystemsai.com
           (then PR main → dev)
 ```
@@ -29,7 +29,7 @@ Delete short-lived branches once they're merged (the button on the PR, or `git b
 | When | Workflow | What it does |
 |---|---|---|
 | A pull request into `dev` or `main` | **CI** (`.github/workflows/ci.yml`) | The checks below. **Paused for now** (decision 19): run the lint and tests locally before merging |
-| You push a tag like `v1.2.0` | **Release** (`.github/workflows/release.yml`) | The same checks, then: checks the tag is on `main` → builds the image and pushes it to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → creates the GitHub release, with the merged PRs listed and the deploy command |
+| You push a tag like `v1.2.0` | **Release** (`.github/workflows/release.yml`) | The same checks, then: checks the tag is on `main` → builds the image and pushes it to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → creates the GitHub release, with the merged PRs listed and the deploy command. **Blocked for now** (decision 19): build, push and publish by hand ([13-releasing.md](13-releasing.md#build-and-publish-a-release-by-hand)) |
 | A push or merge to `dev` or `main` | nothing | The PR was already checked |
 
 The CI checks, in order:
@@ -55,7 +55,7 @@ git push -u origin feature/case-study-pages
 
 ## Releasing
 
-In short: a PR from `dev` into `main` (merge commit), a version tag on `main`, a wait for the Release workflow, then `./deploy.sh <version>` on the server. The full steps, including the first-time setup, hotfixes, rollbacks and version numbers, are in [13-releasing.md](13-releasing.md).
+In short: a PR from `dev` into `main` (merge commit), a version tag on `main`, a wait for the Release workflow, then `sudo ./deploy.sh <version>` on the server. The full steps, including the first-time setup, hotfixes, rollbacks and version numbers, are in [13-releasing.md](13-releasing.md).
 
 ## Conventions
 
