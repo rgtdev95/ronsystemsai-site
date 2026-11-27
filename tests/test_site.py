@@ -87,9 +87,27 @@ def test_test_env_sends_noindex_header():
     assert client.get("/").headers["X-Robots-Tag"] == "noindex, nofollow"
 
 
-def test_security_headers(client):
-    csp = client.get("/").headers["Content-Security-Policy"]
-    assert "default-src 'self'" in csp and "frame-ancestors 'none'" in csp
+@pytest.mark.parametrize("path", ["/", "/book/", "/missing/", "/static/js/boot.js"])
+def test_security_headers(client, path):
+    csp = client.get(path).headers["Content-Security-Policy"]
+    directives = {parts[0]: parts[1:] for value in csp.split(";") if (parts := value.split())}
+    for name in ("default-src", "style-src", "font-src", "base-uri", "form-action"):
+        assert directives[name] == ["'self'"]
+    assert directives["frame-ancestors"] == ["'none'"]
+    assert directives["frame-src"] == ["https://www.youtube-nocookie.com"]
+    assert directives["img-src"] == ["'self'", "data:"]
+    assert "'self'" in directives["script-src"]
+    assert "'self'" in directives["connect-src"]
+    assert "'unsafe-inline'" not in csp and "'unsafe-eval'" not in csp
+
+
+@pytest.mark.parametrize("path", [
+    "/static/../config.py", "/static/%2e%2e/config.py",
+    "/static/%2e%2e/%2e%2e/wsgi.py", "/static/fonts/", "/static/missing.txt",
+])
+def test_static_files_stay_inside_the_public_asset_tree(client, path):
+    assert client.get("/static/js/boot.js").status_code == 200
+    assert client.get(path).status_code == 404
 
 
 def test_sitemap_lists_services(client):
@@ -274,6 +292,27 @@ def _write_item(path, published="2026-01-01", draft=False):
     path.parent.mkdir(parents=True, exist_ok=True)
     extra = "draft: true\n" if draft else ""
     path.write_text(f"---\ntitle: T\ndescription: D\npublished: {published}\n{extra}---\nBody\n", encoding="utf-8")
+
+
+@pytest.mark.parametrize("kind", ["resources", "videos"])
+def test_drafts_are_absent_from_every_publication_path(app, tmp_path, kind):
+    for folder in ("resources", "videos"):
+        (tmp_path / folder).mkdir()
+    _write_item(tmp_path / kind / "published-fixture.md")
+    hidden = tmp_path / kind / "private-draft-fixture.md"
+    hidden.write_text(
+        "---\ntitle: HiddenDraftMarker\ndescription: HiddenDraftDescription\n"
+        "published: 2026-01-01\ndraft: true\n---\nHiddenDraftBody\n", encoding="utf-8",
+    )
+    app.config["CONTENT_DIR"] = str(tmp_path)
+    client = app.test_client()
+    for path in ("/", f"/{kind}/", f"/{kind}/published-fixture/", "/sitemap.xml", "/llms.txt"):
+        response = client.get(path)
+        assert response.status_code == 200
+        body = response.get_data(as_text=True)
+        assert "HiddenDraft" not in body, path
+        assert "private-draft-fixture" not in body, path
+    assert client.get(f"/{kind}/private-draft-fixture/").status_code == 404
 
 
 def test_content_can_sit_in_its_own_folder():

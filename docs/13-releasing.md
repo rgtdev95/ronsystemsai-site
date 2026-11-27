@@ -12,6 +12,8 @@ dev ──PR (merge commit)──► main ──git tag v1.2.0──► image on
 
 Nothing deploys by itself. On the VPS, only the website container comes from this repo: the VPS's shared Caddy serves `ronsystemsai.com` and `www`, and the site uses the VPS's shared Umami at `stats.ronsystemsai.com` (decision 21). Both are set up in the VPS configuration repo.
 
+`deploy.sh` accepts exactly one version in the form `vMAJOR.MINOR.PATCH`, with decimal numbers in all three parts. It rejects extra arguments, suffixes and other characters before reading `.env`, fetching tags or running Docker.
+
 > **For now (decision 19):** GitHub Actions can't run on this account until a billing lock is cleared. CI is paused, so run `uv run ruff check app tests wsgi.py` and `uv run pytest -q` before merging, and leave **Require status checks to pass** off in the ruleset. The Release workflow can't build the image or create the release either, so do both by hand: [Build and publish a release by hand](#build-and-publish-a-release-by-hand). Pushing a tag still starts the Release workflow, and it fails straight away; that's expected until the lock is cleared.
 
 - [First release (one time)](#first-release-one-time)

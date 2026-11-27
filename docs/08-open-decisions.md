@@ -52,3 +52,9 @@ All decisions made as of 2026-09-30.
 | # | Decision | Choice | Notes |
 |---|---|---|---|
 | 21 | **The site on the VPS** | **Only the website container comes from this repo. It joins the VPS's shared `proxy` network as `website-ext-ovhvps1`; the VPS's shared Caddy serves `ronsystemsai.com` and `www`, and the site uses the VPS's shared Umami at `stats.ronsystemsai.com`. The server copy is a root-owned clone in `/opt/apps/website`, deployed with `sudo ./deploy.sh`** | Replaces the Caddy and Umami parts of decisions 12, 13 and 17. The VPS (`ovhvps1`) already runs one Caddy on ports 80/443 for n8n, Outline and Umami's tracker, and one Umami on its shared PostgreSQL, so the site's own Caddy couldn't start, and stopping the shared one would take those apps down. The security headers moved into the VPS's Caddy block for the domain, and `/opt/apps/<app>` with `sudo` follows the VPS's conventions. The container and folder are called `website`, not `ronsystemsai`: the VPS repo keeps the real domain out of its committed files, and its Caddyfile has to name the container. Still one compose file here, now with one service. While GitHub Actions is blocked (decision 19), releases are built, pushed and published by hand ([13-releasing.md](13-releasing.md#build-and-publish-a-release-by-hand)). The `.env` is still copied from the PC rather than kept in the VPS's Infisical, so the "one `.env`" rule holds; moving it into Infisical is possible later. |
+
+## Decided (2026-11-18)
+
+| # | Decision | Choice | Notes |
+|---|---|---|---|
+| 22 | **Python package installer version** | **Pin pip in the existing `requirements.txt`; Docker upgrades that pin before installing the remaining packages** | Approved during security hardening. This keeps one dependency file and prevents image builds from relying on the base image's older installer. The initial pin is 26.2.0; future installer updates use the same file. |

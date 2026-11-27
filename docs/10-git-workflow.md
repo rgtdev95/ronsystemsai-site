@@ -24,6 +24,8 @@ hotfix/*  ──PR────────────────────�
 
 Delete short-lived branches once they're merged (the button on the PR, or `git branch -d <name>` locally).
 
+GitHub's active `main and dev` ruleset enforces pull requests and blocks deletion and force pushes on both branches, with zero required review approvals. Required status checks stay off while CI is paused (decision 19).
+
 ## What runs on GitHub
 
 | When | Workflow | What it does |

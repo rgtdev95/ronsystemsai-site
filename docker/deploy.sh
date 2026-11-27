@@ -11,12 +11,25 @@ set -eu
 
 SITE=https://ronsystemsai.com
 
+valid_version() {
+  # Exactly three nonempty decimal components. Reject extra dots and all other characters.
+  case "$1" in
+    v[0-9]*.[0-9]*.[0-9]*)
+      case "${1#v}" in
+        *[!0-9.]*|*.*.*.*) return 1 ;;
+        *) return 0 ;;
+      esac
+      ;;
+    *) return 1 ;;
+  esac
+}
+
 main() {
   version="${1:-}"
-  case "$version" in
-    v[0-9]*.[0-9]*.[0-9]*) ;;
-    *) echo "Usage: ./deploy.sh v1.2.0   (a version from the GitHub Releases page)" >&2; exit 2 ;;
-  esac
+  if [ "$#" -ne 1 ] || ! valid_version "$version"; then
+    echo "Usage: ./deploy.sh v1.2.0   (a version from the GitHub Releases page)" >&2
+    exit 2
+  fi
 
   cd "$(dirname "$0")"
   if [ ! -f .env ]; then
