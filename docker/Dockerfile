@@ -10,7 +10,8 @@ WORKDIR /srv
 RUN groupadd --system app && useradd --system --gid app --home /srv app
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN python -m pip install --upgrade "$(sed -n '/^pip==/p' requirements.txt)" \
+    && python -m pip install -r requirements.txt
 
 COPY app ./app
 COPY content ./content

@@ -54,11 +54,15 @@ uv run pytest -q                             # tests
 uv run ruff check app tests wsgi.py          # lint
 ```
 
+The deployment-script tests need a POSIX `sh` (available in Linux CI). Pytest skips those checks on a PC without it.
+
+The Docker image upgrades pip from its pin in `requirements.txt` before installing the remaining packages.
+
 ## Branches, releases and deploys
 
 Work goes from short-lived branches into `dev`, and from `dev` into `main`. CI checks every pull request (paused for now: [decision 19](docs/08-open-decisions.md)). To release, tag `main` (`git tag v1.2.0 && git push origin v1.2.0`). GitHub then builds the image and publishes the release (by hand while Actions is blocked). Deploy it on the VPS with `cd /opt/apps/website/docker && sudo ./deploy.sh v1.2.0`. Step by step: [docs/13-releasing.md](docs/13-releasing.md).
 
-Everything on the server is in one file, [docker/compose.yml](docker/compose.yml): Caddy, the website and Umami.
+The website container is defined in [docker/compose.yml](docker/compose.yml). Shared Caddy and Umami are managed in the VPS configuration repository (decision 21).
 
 ## Where things live
 
