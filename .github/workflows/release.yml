@@ -1,11 +1,11 @@
 name: Release
 
-# A release is a version tag on main. After merging dev into main:
-#   git switch main && git pull
-#   git tag v1.2.0 && git push origin v1.2.0
+# A release is a version tag on main. After merging dev into main, publish a release on
+# GitHub (Releases -> Draft a new release) with a new tag like v1.2.0 and Target: main;
+# publishing creates the tag, which starts this workflow (docs/13-releasing.md, decision 23).
 # This runs the CI checks, pushes the image to ghcr.io/<owner>/<repo>:v1.2.0 (and :latest)
-# and creates the GitHub release. Nothing touches the server: deploying is manual,
-# with docker/deploy.sh (see docs/09-architecture-and-deployment.md).
+# and creates the GitHub release if it doesn't exist yet. Nothing touches the server:
+# deploying is manual, with docker/deploy.sh (see docs/09-architecture-and-deployment.md).
 on:
   push:
     tags: ["v*.*.*"]
@@ -57,10 +57,14 @@ jobs:
           docker push "$IMAGE:$VERSION"
           docker push "$IMAGE:latest"
 
-      - name: Create the GitHub release
+      - name: Create the GitHub release (unless it was published on GitHub already)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            echo "The $VERSION release already exists, so its notes stay as they are."
+            exit 0
+          fi
           {
             echo "**Image:** \`$IMAGE:$VERSION\`"
             echo
