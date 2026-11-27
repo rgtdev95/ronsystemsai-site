@@ -81,7 +81,8 @@ Follow [DESIGN.md](DESIGN.md). Colors are CSS custom properties at the top of `s
 ## Git and deploy
 
 - Long-lived branches: `main` (releases) and `dev` (finished work). **Never push to either directly.** Branch from `dev` (`feature/`, `fix/`, `content/`; `hotfix/` from `main`) and open a PR; see [docs/10-git-workflow.md](docs/10-git-workflow.md).
-- Nothing deploys automatically. A `vX.Y.Z` tag on `main` builds the image and the GitHub release; Ron runs `docker/deploy.sh <version>` on the server ([docs/13-releasing.md](docs/13-releasing.md)). **Never create tags or releases, or touch the server, unless asked.**
+- Ron uses git on his PC to start branches, commit and push, and GitHub's website to open and merge pull requests and create releases (decision 23). Give him steps in that form: git commands for his branch, button-by-button GitHub steps for PRs and releases. Don't hand him `gh` or `git tag` commands for those.
+- Nothing deploys automatically. A release published on GitHub creates the `vX.Y.Z` tag on `main`, which builds the image (by hand while Actions is blocked); Ron runs `docker/deploy.sh <version>` on the server ([docs/13-releasing.md](docs/13-releasing.md)). **Never create tags or releases, or touch the server, unless asked.**
 - CI (the `checks` job) must stay green: it lints, tests, validates `docker/compose.yml`, builds the image and loads pages from it. **Paused for now** (GitHub billing lock, decision 19): run the lint and tests locally, plus `docker build` when `docker/` or `requirements.txt` changes.
 - Commit only when asked. Commit messages: `type: short description` (`feat`, `fix`, `content`, `style`, `docs`, `chore`, `refactor`, `test`).
 - Record notable decisions in [docs/08-open-decisions.md](docs/08-open-decisions.md) and keep the README and docs in step with code changes.
