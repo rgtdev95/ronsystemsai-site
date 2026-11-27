@@ -18,8 +18,9 @@ The site work is done and in `dev` (PR #3). The first two articles and the move 
   git push -u origin feature/launch-prep
   ```
 
-- [ ] **Clear the GitHub billing lock.** No GitHub Actions job can run until it's cleared: CI is paused and the Release workflow is blocked (decision 19). Check GitHub → Settings → Billing and licensing; if nothing is owed there, contact GitHub Support. Then uncomment the `pull_request` trigger in `.github/workflows/ci.yml` and add the `checks` status to the ruleset
-- [ ] **First release and server setup:** follow [13-releasing.md](13-releasing.md), "First release (one time)", steps 1–12. Step 9 checks the VPS for leftovers from the old auto-deploy (the `ec8754a` push to `main` on 2026-11-08 most likely failed at the server step)
+- [ ] **Clear the GitHub billing lock.** No GitHub Actions job can run until it's cleared: CI is paused and the Release workflow is blocked (decision 19). Check GitHub → Settings → Billing and licensing; if nothing is owed there, contact GitHub Support. Then uncomment the `pull_request` trigger in `.github/workflows/ci.yml` and add the `checks` status to the ruleset. On the next release, confirm that publishing it on GitHub starts **Actions → Release** (decision 23; this couldn't be tried while Actions was blocked)
+- [ ] **First release and server setup:** follow [13-releasing.md](13-releasing.md), "First release (one time)", steps 1–12. Step 9 checks the VPS for leftovers from the old auto-deploy (the `ec8754a` push to `main` on 2026-11-08 most likely failed at the server step). Where it stands on 2026-11-27: the release PR (#4) is merged and the `v1.0.0` tag is pushed. There's no GitHub release yet, and the image can't be downloaded publicly yet. Still to do in step 2: **Default branch** is still `main`. In step 4, pick the existing `v1.0.0` tag rather than creating one
+- [ ] **Merge `main` back into `dev` before the next release PR** (found 2026-11-27): the v1.0.0 release PR (#4) was squash-merged, so a `dev` → `main` PR now shows conflicts in 7 files. Follow [Fix: a squash-merged release PR](13-releasing.md#fix-a-squash-merged-release-pr). `main` still matches `dev` as of `29c09b2`, so the check there passes
 
 ### Proton
 

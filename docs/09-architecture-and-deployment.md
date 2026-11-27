@@ -99,7 +99,7 @@ Nothing deploys by itself. GitHub builds each release, and you put it on the ser
 | When | What happens |
 |---|---|
 | A pull request into `dev` or `main` | **CI**: lint → tests → compose file check → build the image → start it and load key pages. Nothing is published. **Paused for now** (decision 19 in [08-open-decisions.md](08-open-decisions.md)) |
-| You push a tag like `v1.2.0` on `main` | **Release**: the same checks → image pushed to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → GitHub release with the merged PRs and the deploy command. **Blocked for now** (decision 19): you build, push and publish by hand ([13-releasing.md](13-releasing.md#build-and-publish-a-release-by-hand)) |
+| You publish a release on GitHub with a new tag like `v1.2.0` on `main` (decision 23) | **Release**: the same checks → image pushed to `ghcr.io/rgtdev95/ronsystemsai-site:v1.2.0` and `:latest` → the GitHub release with the merged PRs and the deploy command, if it doesn't exist yet. **Blocked for now** (decision 19): you build and push the image by hand ([13-releasing.md](13-releasing.md#build-and-push-the-image-by-hand)) |
 | You run `sudo ./deploy.sh v1.2.0` on the server | Checks out that tag, so `compose.yml` matches the release → records `IMAGE_TAG=v1.2.0` in `.env` → pulls the image and restarts the site, waiting until it's healthy (a few seconds of downtime) → checks `https://ronsystemsai.com/healthz` → asks search engines to recrawl through IndexNow, if `INDEXNOW_KEY` is set |
 | Rollback | The same command with an older version: `sudo ./deploy.sh v1.1.0` |
 

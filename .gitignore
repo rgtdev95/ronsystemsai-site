@@ -28,3 +28,6 @@ Thumbs.db
 
 # Design review captures
 .impeccable/review/
+
+# Local security audit results
+/audits/my-project/
